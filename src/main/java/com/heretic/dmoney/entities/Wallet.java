@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import javax.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
-import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -30,13 +30,18 @@ public class Wallet {
     private String walletNumber;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "WALLET_ID")
+    @JoinColumn(name = "PERSON_ID")
     private Person person;
 
-    @Enumerated(STRING)
     @Column(name = "CURRENCY", updatable = false, nullable = false)
     private CurrencyUnit currency;
 
     @Column(name = "AMOUNT", nullable = false)
     private MonetaryAmount amount;
+
+    @OneToMany(mappedBy = "sender")
+    private Set<Operation> incomeOperations;
+
+    @OneToMany(mappedBy = "receiver")
+    private Set<Operation> outcomeOperations;
 }
