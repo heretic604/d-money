@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static javax.persistence.EnumType.STRING;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -25,7 +26,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "PERSON_ID", unique = true, updatable = false, nullable = false)
-    private long userId;
+    private UUID userId;
 
     @Column(name = "USERNAME", unique = true, nullable = false)
     private String username;
