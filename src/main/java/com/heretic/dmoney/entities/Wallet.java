@@ -29,8 +29,9 @@ public class Wallet {
     @Column(name = "WALLET_NUMBER", unique = true, updatable = false, nullable = false)
     private String walletNumber;
 
-//    @Column(name = "PERSON_ID", updatable = false, nullable = false)
-//    private Person person;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "WALLET_ID")
+    private Person person;
 
     @Enumerated(STRING)
     @Column(name = "CURRENCY", updatable = false, nullable = false)

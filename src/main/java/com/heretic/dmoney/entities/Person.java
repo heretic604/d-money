@@ -52,7 +52,6 @@ public class Person {
     @Column(name = "REGISTRATION", nullable = false)
     private LocalDateTime registrationTime;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "PERSON_ID")
+    @OneToMany(mappedBy = "person")
     private Set<Wallet> wallets;
 }
