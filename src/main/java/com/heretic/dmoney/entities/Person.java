@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 import static javax.persistence.EnumType.STRING;
@@ -26,7 +27,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "PERSON_ID", unique = true, updatable = false, nullable = false)
-    private UUID userId;
+    private UUID personId;
 
     @Column(name = "USERNAME", unique = true, nullable = false)
     private String username;
@@ -50,4 +51,8 @@ public class Person {
 
     @Column(name = "REGISTRATION", nullable = false)
     private LocalDateTime registrationTime;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "PERSON_ID")
+    private Set<Wallet> wallets;
 }

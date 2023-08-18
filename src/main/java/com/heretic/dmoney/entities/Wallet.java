@@ -29,8 +29,8 @@ public class Wallet {
     @Column(name = "WALLET_NUMBER", unique = true, updatable = false, nullable = false)
     private String walletNumber;
 
-    @Column(name = "PERSON_ID", updatable = false, nullable = false)
-    private long userId;
+//    @Column(name = "PERSON_ID", updatable = false, nullable = false)
+//    private Person person;
 
     @Enumerated(STRING)
     @Column(name = "CURRENCY", updatable = false, nullable = false)
