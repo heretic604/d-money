@@ -7,13 +7,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
-import java.util.UUID;
 
 import static com.heretic.dmoney.enums.UserRole.VISITOR;
 import static com.heretic.dmoney.enums.UserStatus.ACTIVE;
 import static java.time.LocalDate.of;
 import static java.time.LocalDateTime.now;
-import static java.util.UUID.*;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PersonMapperTest {
