@@ -1,4 +1,4 @@
-package com.heretic.dmoney.dto.requests;
+package com.heretic.dmoney.dto.responses;
 
 import com.heretic.dmoney.entities.Wallet;
 import lombok.Builder;

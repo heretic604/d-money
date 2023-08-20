@@ -1,6 +1,6 @@
 package com.heretic.dmoney.dto.requests;
 
-import com.heretic.dmoney.entities.Operation;
+import com.heretic.dmoney.dto.responses.OperationResponse;
 import com.heretic.dmoney.entities.Person;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +17,6 @@ public class WalletRequest {
     private Person person;
     private CurrencyUnit currency;
     private MonetaryAmount amount;
-    private Set<Operation> incomeOperations;
-    private Set<Operation> outcomeOperations;
+    private Set<OperationResponse> incomeOperations;
+    private Set<OperationResponse> outcomeOperations;
 }
