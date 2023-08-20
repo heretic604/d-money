@@ -3,6 +3,7 @@ package com.heretic.dmoney.mappers;
 import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.dto.responses.WalletResponse;
 import com.heretic.dmoney.entities.Person;
+import com.heretic.dmoney.entities.Wallet;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
