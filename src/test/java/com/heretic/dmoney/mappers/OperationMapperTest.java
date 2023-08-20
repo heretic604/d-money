@@ -17,8 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class OperationMapperTest {
 
-    public static Operation entity;
-    public static OperationRequest request;
+    private static Operation entity;
+    private static OperationRequest request;
 
     @BeforeAll
     static void init() {

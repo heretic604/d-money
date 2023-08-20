@@ -1,12 +1,10 @@
 package com.heretic.dmoney.controllers;
 
+import com.heretic.dmoney.dto.requests.PersonRequest;
 import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.services.PersonService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +16,11 @@ public class PersonController {
 
     private final PersonService personService;
 
+    @PostMapping(value = "person")
+    public PersonResponse saveUser(@RequestBody PersonRequest personRequest) {
+        return personService.savePerson(personRequest);
+    }
+
     @GetMapping(value = "person/{id}")
     public PersonResponse getPerson(@PathVariable UUID id) {
         return personService.getPerson(id);
@@ -25,11 +28,21 @@ public class PersonController {
 
     @GetMapping(value = "personByLogin/{username}")
     public PersonResponse getPersonByUsername(@PathVariable String username) {
-        return personService.getPersonByUsername(username);
+        return personService.getPerson(username);
     }
 
-    @GetMapping("/persons")
+    @GetMapping("persons")
     public List<PersonResponse> getPersons() {
         return personService.getPersons();
+    }
+
+    @PutMapping("person/{personRequest}")
+    public PersonResponse updatePerson(@PathVariable PersonRequest personRequest, UUID id){
+        return personService.updatePerson(personRequest, id);
+    }
+
+    @DeleteMapping(value = "person/{id}")
+    public boolean deletePerson(@PathVariable UUID id) {
+        return personService.deletePerson(id);
     }
 }

@@ -3,7 +3,6 @@ package com.heretic.dmoney.mappers;
 import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.dto.responses.WalletResponse;
 import com.heretic.dmoney.entities.Person;
-import com.heretic.dmoney.entities.Wallet;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -17,8 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class WalletMapperTest {
 
-    public static Wallet entity;
-    public static WalletRequest request;
+    private static Wallet entity;
+    private static WalletRequest request;
 
     @BeforeAll
     static void init() {
