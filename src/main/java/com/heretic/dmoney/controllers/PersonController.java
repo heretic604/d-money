@@ -31,13 +31,13 @@ public class PersonController {
         return personService.getPerson(username);
     }
 
-    @GetMapping("persons")
+    @GetMapping(value = "persons")
     public List<PersonResponse> getPersons() {
         return personService.getPersons();
     }
 
-    @PutMapping("person/{personRequest}")
-    public PersonResponse updatePerson(@PathVariable PersonRequest personRequest, UUID id) {
+    @PutMapping(value = "person/{personRequest}/{id}")
+    public PersonResponse updatePerson(@PathVariable PersonRequest personRequest, @PathVariable UUID id) {
         return personService.updatePerson(personRequest, id);
     }
 
