@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static com.heretic.dmoney.mappers.PersonMapper.INSTANCE;
 import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_ID_MASSAGE;
-import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_USERNAME_MASSAGE;
+import static com.heretic.dmoney.util.Constants.USER_NOT_FOUND_BY_USERNAME_MASSAGE;
 import static java.lang.String.format;
 
 @Service
@@ -38,7 +38,7 @@ public class PersonServiceImpl implements PersonService {
     public PersonResponse getPerson(String username) {
         return personRepository.findByUsername(username)
                 .map(INSTANCE::toDto)
-                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_USERNAME_MASSAGE, username)));
+                .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_USERNAME_MASSAGE, username)));
     }
 
     @Override
@@ -66,5 +66,4 @@ public class PersonServiceImpl implements PersonService {
             return false;
         }
     }
-
 }

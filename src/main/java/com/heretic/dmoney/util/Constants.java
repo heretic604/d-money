@@ -22,8 +22,8 @@ public final class Constants {
     /**
      * Exception messages
      */
-    public static final String ENTITY_NOT_FOUND_BY_ID_MASSAGE = "User not found by id %s";
-    public static final String ENTITY_NOT_FOUND_BY_USERNAME_MASSAGE = "User not found by username %s";
+    public static final String ENTITY_NOT_FOUND_BY_ID_MASSAGE = "Nothing found by id %s";
+    public static final String USER_NOT_FOUND_BY_USERNAME_MASSAGE = "User not found by username %s";
 
     /**
      * Objects for tests

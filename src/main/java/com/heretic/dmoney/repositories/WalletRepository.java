@@ -1,5 +1,6 @@
 package com.heretic.dmoney.repositories;
 
+import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.entities.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 
