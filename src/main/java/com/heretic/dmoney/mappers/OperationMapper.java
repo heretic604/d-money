@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import static org.mapstruct.factory.Mappers.getMapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 @Component
 public interface OperationMapper {
 

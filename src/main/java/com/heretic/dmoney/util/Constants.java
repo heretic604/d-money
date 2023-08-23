@@ -37,7 +37,7 @@ public final class Constants {
             .role(VISITOR)
             .birthday(of(2000, 1, 1))
             .registrationTime(now())
-            .wallets(new HashSet<>())
+//            .wallets(new HashSet<>())
             .build();
 
     public static final PersonRequest TEST_PERSON_REQUEST = PersonRequest.builder()
@@ -48,7 +48,7 @@ public final class Constants {
             .role(VISITOR)
             .birthday(of(2000, 1, 1))
             .registrationTime(now())
-            .wallets(new HashSet<>())
+//            .wallets(new HashSet<>())
             .build();
 
     private Constants() {

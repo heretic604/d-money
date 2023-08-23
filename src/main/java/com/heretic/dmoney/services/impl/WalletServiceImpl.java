@@ -7,7 +7,7 @@ import com.heretic.dmoney.services.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,12 +48,12 @@ public class WalletServiceImpl implements WalletService {
                 .toList();
     }
 
-    @Override
-    public WalletResponse updateWallet(WalletRequest walletRequest, UUID id) {
-        return walletRepository.updateWalletByWalletId(INSTANCE.toEntity(walletRequest), id)
-                .map(INSTANCE::toDto)
-                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID_MASSAGE, id)));
-    }
+//    @Override
+//    public WalletResponse updateWallet(WalletRequest walletRequest, UUID id) {
+//        return walletRepository.updateWalletByWalletId(INSTANCE.toEntity(walletRequest), id)
+//                .map(INSTANCE::toDto)
+//                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID_MASSAGE, id)));
+//    }
 
     @Override
     public boolean deleteWallet(UUID id) {

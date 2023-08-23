@@ -7,14 +7,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+//import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import static javax.persistence.EnumType.STRING;
-import static javax.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "PERSON")
@@ -25,8 +26,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Person {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "PERSON_ID", unique = true, updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "PERSON_ID")
     private UUID personId;
 
     @Column(name = "USERNAME", unique = true, nullable = false)

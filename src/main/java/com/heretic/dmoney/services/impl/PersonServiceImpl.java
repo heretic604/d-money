@@ -7,7 +7,7 @@ import com.heretic.dmoney.services.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,12 +49,12 @@ public class PersonServiceImpl implements PersonService {
                 .toList();
     }
 
-    @Override
-    public PersonResponse updatePerson(PersonRequest personRequest, UUID id) {
-        return personRepository.updatePersonByPersonId(INSTANCE.toEntity(personRequest), id)
-                .map(INSTANCE::toDto)
-                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID_MASSAGE, id)));
-    }
+//    @Override
+//    public PersonResponse updatePerson(PersonRequest personRequest, UUID id) {
+//        return personRepository.updatePersonByPersonId(INSTANCE.toEntity(personRequest), id)
+//                .map(INSTANCE::toDto)
+//                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID_MASSAGE, id)));
+//    }
 
     @Override
     public boolean deletePerson(UUID id) {

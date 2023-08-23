@@ -18,7 +18,7 @@ public interface WalletService {
 
     List<WalletResponse> getWallets();
 
-    WalletResponse updateWallet(WalletRequest walletRequest, UUID id);
+//    WalletResponse updateWallet(WalletRequest walletRequest, UUID id);
 
     boolean deleteWallet(UUID id);
 }

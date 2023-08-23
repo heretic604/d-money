@@ -10,5 +10,5 @@ public interface PersonRepository extends JpaRepository<Person, UUID> {
 
     Optional<Person> findByUsername(String username);
 
-    Optional<Person> updatePersonByPersonId(Person person, UUID id);
+//    Optional<Person> updatePersonByPersonId(Person person, UUID id);
 }

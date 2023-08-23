@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Set;
 import java.util.UUID;
 
-import static javax.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "WALLET")
@@ -22,8 +22,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class Wallet {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "WALLET_ID", unique = true, updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "WALLET_ID")
     private UUID walletId;
 
     @Column(name = "WALLET_NUMBER", unique = true, updatable = false, nullable = false)
@@ -33,11 +33,11 @@ public class Wallet {
     @JoinColumn(name = "PERSON_ID")
     private Person person;
 
-    @Column(name = "CURRENCY", updatable = false, nullable = false)
-    private CurrencyUnit currency;
-
-    @Column(name = "AMOUNT", nullable = false)
-    private MonetaryAmount amount;
+//    @Column(name = "CURRENCY", updatable = false, nullable = false)
+//    private CurrencyUnit currency;
+//
+//    @Column(name = "AMOUNT", nullable = false)
+//    private MonetaryAmount amount;
 
     @OneToMany(mappedBy = "sender")
     private Set<Operation> incomeOperations;

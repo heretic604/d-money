@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-@Service
 public interface OperationService {
 
     OperationResponse saveOperation(OperationRequest operationRequest);

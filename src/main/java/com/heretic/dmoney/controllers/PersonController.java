@@ -36,10 +36,10 @@ public class PersonController {
         return personService.getPersons();
     }
 
-    @PutMapping(value = "person/{personRequest}/{id}")
-    public PersonResponse updatePerson(@PathVariable PersonRequest personRequest, @PathVariable UUID id) {
-        return personService.updatePerson(personRequest, id);
-    }
+//    @PutMapping(value = "person/{personRequest}/{id}")
+//    public PersonResponse updatePerson(@PathVariable PersonRequest personRequest, @PathVariable UUID id) {
+//        return personService.updatePerson(personRequest, id);
+//    }
 
     @DeleteMapping(value = "person/{id}")
     public boolean deletePerson(@PathVariable UUID id) {
