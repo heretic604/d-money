@@ -2,20 +2,18 @@ package com.heretic.dmoney.entities;
 
 import com.heretic.dmoney.enums.UserRole;
 import com.heretic.dmoney.enums.UserStatus;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//import javax.persistence.*;
-import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
 import static jakarta.persistence.EnumType.STRING;
-import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "PERSON")
@@ -30,27 +28,27 @@ public class Person {
     @Column(name = "PERSON_ID")
     private UUID personId;
 
-    @Column(name = "USERNAME", unique = true, nullable = false)
+    @Column(name = "USERNAME", unique = true)
     private String username;
 
-    @Column(name = "PASSWORD", nullable = false)
+    @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name = "EMAIL", unique = true, nullable = false)
+    @Column(name = "EMAIL", unique = true)
     private String email;
 
     @Enumerated(STRING)
-    @Column(name = "USER_STATUS", nullable = false)
+    @Column(name = "USER_STATUS")
     private UserStatus status;
 
     @Enumerated(STRING)
-    @Column(name = "USER_ROLE", nullable = false)
+    @Column(name = "USER_ROLE")
     private UserRole role;
 
-    @Column(name = "BIRTHDAY", nullable = false)
+    @Column(name = "BIRTHDAY")
     private LocalDate birthday;
 
-    @Column(name = "REGISTRATION", nullable = false)
+    @Column(name = "REGISTRATION")
     private LocalDateTime registrationTime;
 
     @OneToMany(mappedBy = "person")

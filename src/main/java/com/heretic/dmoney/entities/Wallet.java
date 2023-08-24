@@ -1,17 +1,17 @@
 package com.heretic.dmoney.entities;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.money.CurrencyUnit;
-import javax.money.MonetaryAmount;
-import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.EAGER;
 
 @Entity
 @Table(name = "WALLET")
@@ -26,18 +26,18 @@ public class Wallet {
     @Column(name = "WALLET_ID")
     private UUID walletId;
 
-    @Column(name = "WALLET_NUMBER", unique = true, updatable = false, nullable = false)
+    @Column(name = "WALLET_NUMBER", unique = true, updatable = false)
     private String walletNumber;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = ALL, fetch = EAGER)
     @JoinColumn(name = "PERSON_ID")
     private Person person;
 
-//    @Column(name = "CURRENCY", updatable = false, nullable = false)
-//    private CurrencyUnit currency;
-//
-//    @Column(name = "AMOUNT", nullable = false)
-//    private MonetaryAmount amount;
+    @Column(name = "CURRENCY", updatable = false)
+    private String currency;
+
+    @Column(name = "AMOUNT")
+    private BigDecimal amount;
 
     @OneToMany(mappedBy = "sender")
     private Set<Operation> incomeOperations;

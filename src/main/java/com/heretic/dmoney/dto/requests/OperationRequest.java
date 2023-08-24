@@ -4,9 +4,7 @@ import com.heretic.dmoney.entities.Wallet;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.money.CurrencyUnit;
-import javax.money.MonetaryAmount;
-import javax.money.convert.ExchangeRate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,10 +13,9 @@ public class OperationRequest {
 
     private Wallet sender;
     private Wallet receiver;
-    private CurrencyUnit currencyOut;
-    private CurrencyUnit currencyIn;
-    private MonetaryAmount amountOut;
-    private MonetaryAmount amountIn;
-    private ExchangeRate exchangeRate;
+    private String currencyOut;
+    private String currencyIn;
+    private BigDecimal amountOut;
+    private BigDecimal amountIn;
     private LocalDateTime time;
 }

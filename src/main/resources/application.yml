@@ -4,19 +4,9 @@ server:
 spring:
   application:
     name: d-money
-  datasource:
-    url: jdbc:mysql://localhost:3306/d-money
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: hb1555843
-  jpa:
-    hibernate:
-      ddl-auto: create
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    show-sql: true
   cloud:
     config:
       enabled: true
-      uri: http://localhost:8088
+      uri: http://localhost:8888
   profiles:
     active: test

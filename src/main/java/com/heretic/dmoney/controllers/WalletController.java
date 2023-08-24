@@ -26,7 +26,7 @@ public class WalletController {
         return walletService.getWallet(id);
     }
 
-    @GetMapping(value = "wallet/{walletNumber}")
+    @GetMapping(value = "walletByNumber/{walletNumber}")
     public WalletResponse getWallet(@PathVariable String walletNumber) {
         return walletService.getWallet(walletNumber);
     }

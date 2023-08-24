@@ -5,8 +5,7 @@ import com.heretic.dmoney.entities.Person;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.money.CurrencyUnit;
-import javax.money.MonetaryAmount;
+import java.math.BigDecimal;
 import java.util.Set;
 
 @Data
@@ -15,8 +14,8 @@ public class WalletRequest {
 
     private String walletNumber;
     private Person person;
-    private CurrencyUnit currency;
-    private MonetaryAmount amount;
+    private String currency;
+    private BigDecimal amount;
     private Set<OperationResponse> incomeOperations;
     private Set<OperationResponse> outcomeOperations;
 }
