@@ -9,6 +9,4 @@ import java.util.UUID;
 public interface WalletRepository extends JpaRepository<Wallet, UUID> {
 
     Optional<Wallet> findByWalletNumber(String walletNumber);
-
-//    Optional<Wallet> updateWalletByWalletId(Wallet wallet, UUID id);
 }

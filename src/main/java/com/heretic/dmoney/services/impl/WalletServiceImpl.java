@@ -2,6 +2,8 @@ package com.heretic.dmoney.services.impl;
 
 import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.dto.responses.WalletResponse;
+import com.heretic.dmoney.entities.Wallet;
+import com.heretic.dmoney.mappers.WalletMapper;
 import com.heretic.dmoney.repositories.WalletRepository;
 import com.heretic.dmoney.services.WalletService;
 import jakarta.persistence.EntityNotFoundException;
@@ -49,12 +51,12 @@ public class WalletServiceImpl implements WalletService {
                 .toList();
     }
 
-//    @Override
-//    public WalletResponse updateWallet(WalletRequest walletRequest, UUID id) {
-//        return walletRepository.updateWalletByWalletId(INSTANCE.toEntity(walletRequest), id)
-//                .map(INSTANCE::toDto)
-//                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID_MASSAGE, id)));
-//    }
+    @Override
+    public WalletResponse updateWallet(WalletRequest walletRequest, UUID id) {
+        Wallet wallet = walletRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID, id)));
+        return WalletMapper.INSTANCE.toDto(walletRepository.save(WalletMapper.INSTANCE.update(walletRequest, wallet)));
+    }
 
     @Override
     public boolean deleteWallet(UUID id) {
