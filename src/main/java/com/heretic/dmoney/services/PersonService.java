@@ -18,7 +18,7 @@ public interface PersonService {
 
     List<PersonResponse> getPersons();
 
-//    PersonResponse updatePerson(PersonRequest personRequest, UUID id);
+    PersonResponse updatePerson(PersonRequest personRequest, UUID id);
 
     boolean deletePerson(UUID id);
 }

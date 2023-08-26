@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.heretic.dmoney.mappers.OperationMapper.INSTANCE;
-import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_ID_MASSAGE;
+import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_ID;
 import static java.lang.String.format;
 
 @Service
@@ -31,7 +31,7 @@ public class OperationServiceImpl implements OperationService {
     public OperationResponse getOperation(UUID id) {
         return operationRepository.findById(id)
                 .map(INSTANCE::toDto)
-                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID_MASSAGE, id)));
+                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
