@@ -1,5 +1,6 @@
 package com.heretic.dmoney.entities;
 
+import com.heretic.dmoney.enums.OperationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,20 +12,25 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.EAGER;
 
-@Entity
-@Table(name = "OPERATION")
 @Data
+@Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "OPERATION")
 public class Operation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "OPERATION_ID")
     private UUID operationId;
+
+    @Column(name = "STATUS", nullable = false)
+    @Enumerated(STRING)
+    private OperationStatus status;
 
     @ManyToOne(cascade = ALL, fetch = EAGER)
     @JoinColumn(name = "SENDER_WALLET_ID")
@@ -46,6 +52,6 @@ public class Operation {
     @Column(name = "AMOUNT_IN", updatable = false, nullable = false)
     private BigDecimal amountIn;
 
-    @Column(name = "TIME", updatable = false)
+    @Column(name = "TIME", updatable = false, nullable = false)
     private LocalDateTime time;
 }

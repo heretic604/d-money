@@ -1,6 +1,6 @@
 package com.heretic.dmoney.dto.responses;
 
-import com.heretic.dmoney.entities.Wallet;
+import com.heretic.dmoney.enums.OperationStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -13,8 +13,9 @@ import java.util.UUID;
 public class OperationResponse {
 
     private UUID operationId;
-    private Wallet sender;
-    private Wallet receiver;
+    private OperationStatus status;
+    private WalletResponse sender;
+    private WalletResponse receiver;
     private String currencyOut;
     private String currencyIn;
     private BigDecimal amountOut;

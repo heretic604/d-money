@@ -1,6 +1,6 @@
 package com.heretic.dmoney.dto.requests;
 
-import com.heretic.dmoney.entities.Wallet;
+import com.heretic.dmoney.enums.OperationStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -11,8 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 public class OperationRequest {
 
-    private Wallet sender;
-    private Wallet receiver;
+    private OperationStatus status;
+    private WalletRequest sender;
+    private WalletRequest receiver;
     private String currencyOut;
     private String currencyIn;
     private BigDecimal amountOut;
