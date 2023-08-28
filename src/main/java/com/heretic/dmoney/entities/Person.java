@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.EAGER;
 
 @Entity
 @Table(name = "PERSON")
@@ -51,6 +52,6 @@ public class Person {
     @Column(name = "REGISTRATION")
     private LocalDateTime registrationTime;
 
-    @OneToMany(mappedBy = "person")
-    private Set<Wallet> wallets;
+    @OneToMany(mappedBy = "person", fetch = EAGER, cascade = CascadeType.ALL)
+    private List<Wallet> wallets;
 }

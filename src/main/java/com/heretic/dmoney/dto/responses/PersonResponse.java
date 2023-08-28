@@ -1,6 +1,5 @@
 package com.heretic.dmoney.dto.responses;
 
-import com.heretic.dmoney.entities.Wallet;
 import com.heretic.dmoney.enums.UserRole;
 import com.heretic.dmoney.enums.UserStatus;
 import lombok.Builder;
@@ -8,7 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -23,5 +22,5 @@ public class PersonResponse {
     private UserRole role;
     private LocalDate birthday;
     private LocalDateTime registrationTime;
-    private Set<Wallet> wallets;
+    private List<WalletResponse> walletResponses;
 }

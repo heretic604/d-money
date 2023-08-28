@@ -10,7 +10,7 @@ import java.util.UUID;
 @Service
 public interface WalletService {
 
-    WalletResponse saveWallet(WalletRequest walletRequest);
+    WalletResponse saveWallet(WalletRequest walletRequest, UUID personID);
 
     WalletResponse getWallet(UUID id);
 

@@ -7,10 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
-import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.FetchType.EAGER;
 
 @Entity
@@ -29,7 +28,7 @@ public class Wallet {
     @Column(name = "WALLET_NUMBER", unique = true, updatable = false)
     private String walletNumber;
 
-    @ManyToOne(cascade = ALL, fetch = EAGER)
+    @ManyToOne(fetch = EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "PERSON_ID")
     private Person person;
 
@@ -40,8 +39,8 @@ public class Wallet {
     private BigDecimal amount;
 
     @OneToMany(mappedBy = "sender")
-    private Set<Operation> incomeOperations;
+    private List<Operation> incomeOperations;
 
     @OneToMany(mappedBy = "receiver")
-    private Set<Operation> outcomeOperations;
+    private List<Operation> outcomeOperations;
 }

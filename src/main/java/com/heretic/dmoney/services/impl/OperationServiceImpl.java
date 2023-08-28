@@ -2,17 +2,17 @@ package com.heretic.dmoney.services.impl;
 
 import com.heretic.dmoney.dto.requests.OperationRequest;
 import com.heretic.dmoney.dto.responses.OperationResponse;
+import com.heretic.dmoney.mappers.EntityDtoMapper;
 import com.heretic.dmoney.repositories.OperationRepository;
 import com.heretic.dmoney.services.OperationService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import static com.heretic.dmoney.mappers.OperationMapper.INSTANCE;
 import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_ID;
 import static java.lang.String.format;
 
@@ -21,16 +21,17 @@ import static java.lang.String.format;
 public class OperationServiceImpl implements OperationService {
 
     private final OperationRepository operationRepository;
+    private final EntityDtoMapper mapper;
 
     @Override
     public OperationResponse saveOperation(OperationRequest operationRequest) {
-        return INSTANCE.toDto(operationRepository.save(INSTANCE.toEntity(operationRequest)));
+        return mapper.operationEntityToDTO((operationRepository.save(mapper.operationDTOtoEntity(operationRequest))));
     }
 
     @Override
     public OperationResponse getOperation(UUID id) {
         return operationRepository.findById(id)
-                .map(INSTANCE::toDto)
+                .map(mapper::operationEntityToDTO)
                 .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID, id)));
     }
 
@@ -38,7 +39,7 @@ public class OperationServiceImpl implements OperationService {
     public List<OperationResponse> getOperations() {
         return operationRepository.findAll()
                 .stream()
-                .map(INSTANCE::toDto)
+                .map(mapper::operationEntityToDTO)
                 .toList();
     }
 
@@ -46,7 +47,7 @@ public class OperationServiceImpl implements OperationService {
     public List<OperationResponse> getOperations(LocalDate date) {
         return operationRepository.getOperationsByTimeContaining(date)
                 .stream()
-                .map(INSTANCE::toDto)
+                .map(mapper::operationEntityToDTO)
                 .toList();
     }
 }

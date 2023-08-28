@@ -1,19 +1,22 @@
 package com.heretic.dmoney.services.impl;
 
+import com.heretic.dmoney.dto.requests.PersonRequest;
 import com.heretic.dmoney.dto.requests.WalletRequest;
+import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.dto.responses.WalletResponse;
+import com.heretic.dmoney.entities.Person;
 import com.heretic.dmoney.entities.Wallet;
-import com.heretic.dmoney.mappers.WalletMapper;
+import com.heretic.dmoney.mappers.EntityDtoMapper;
+import com.heretic.dmoney.repositories.PersonRepository;
 import com.heretic.dmoney.repositories.WalletRepository;
+import com.heretic.dmoney.services.PersonService;
 import com.heretic.dmoney.services.WalletService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-import static com.heretic.dmoney.mappers.WalletMapper.INSTANCE;
 import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_ID;
 import static com.heretic.dmoney.util.Constants.WALLET_NOT_FOUND_BY_USERNAME;
 import static java.lang.String.format;
@@ -23,23 +26,35 @@ import static java.lang.String.format;
 public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
+    private final EntityDtoMapper mapper;
+    private final PersonService personService;
+    private final PersonRepository personRepository;
+
+//    @Override
+//    public WalletResponse saveWallet(WalletRequest walletRequest) {
+//        Wallet wallet = mapper.walletDTOtoEntity(walletRequest);
+//        wallet.setPerson(mapper.personRequestIdToEntity(walletRequest.getPersonIdRequest()));
+//        return mapper.walletEntityToDTO(walletRepository.save(wallet));
+//    }
 
     @Override
-    public WalletResponse saveWallet(WalletRequest walletRequest) {
-        return INSTANCE.toDto(walletRepository.save(INSTANCE.toEntity(walletRequest)));
+    public WalletResponse saveWallet(WalletRequest walletRequest, UUID personID) {
+        Wallet wallet = mapper.walletDTOtoEntity(walletRequest);
+        personRepository.findById(personID).ifPresent(wallet::setPerson);
+        return mapper.walletEntityToDTO(walletRepository.save(wallet));
     }
 
     @Override
     public WalletResponse getWallet(UUID id) {
         return walletRepository.findById(id)
-                .map(INSTANCE::toDto)
+                .map(mapper::walletEntityToDTO)
                 .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
     public WalletResponse getWallet(String walletNumber) {
         return walletRepository.findByWalletNumber(walletNumber)
-                .map(INSTANCE::toDto)
+                .map(mapper::walletEntityToDTO)
                 .orElseThrow(() -> new EntityNotFoundException(format(WALLET_NOT_FOUND_BY_USERNAME, walletNumber)));
     }
 
@@ -47,7 +62,7 @@ public class WalletServiceImpl implements WalletService {
     public List<WalletResponse> getWallets() {
         return walletRepository.findAll()
                 .stream()
-                .map(INSTANCE::toDto)
+                .map(mapper::walletEntityToDTO)
                 .toList();
     }
 
@@ -55,7 +70,7 @@ public class WalletServiceImpl implements WalletService {
     public WalletResponse updateWallet(WalletRequest walletRequest, UUID id) {
         Wallet wallet = walletRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID, id)));
-        return WalletMapper.INSTANCE.toDto(walletRepository.save(WalletMapper.INSTANCE.update(walletRequest, wallet)));
+        return mapper.walletEntityToDTO(walletRepository.save(mapper.updateWalletEntity(walletRequest, wallet)));
     }
 
     @Override

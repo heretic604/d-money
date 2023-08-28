@@ -16,9 +16,9 @@ public class WalletController {
 
     private final WalletService walletService;
 
-    @PostMapping(value = "wallet")
-    public WalletResponse saveWallet(@RequestBody WalletRequest walletRequest) {
-        return walletService.saveWallet(walletRequest);
+    @PostMapping(value = "wallet/{personID}")
+    public WalletResponse saveWallet(@RequestBody WalletRequest walletRequest, @PathVariable UUID personID) {
+        return walletService.saveWallet(walletRequest, personID);
     }
 
     @GetMapping(value = "wallet/{id}")

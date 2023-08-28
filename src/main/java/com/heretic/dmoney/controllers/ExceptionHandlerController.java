@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
@@ -23,6 +24,7 @@ public class ExceptionHandlerController {
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException exception) {
         log.warn(exception.getMessage());
         return ErrorResponse.builder()
+                .errorCount(1)
                 .httpStatus(BAD_REQUEST)
                 .time(now())
                 .message(exception.getMessage())
@@ -38,6 +40,18 @@ public class ExceptionHandlerController {
                 .time(now())
                 .httpStatus(BAD_REQUEST)
                 .errors(List.copyOf(buildErrors(exception)))
+                .build();
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ErrorResponse handleValidationException(SQLIntegrityConstraintViolationException exception) {
+        log.warn(exception.getMessage());
+        return ErrorResponse.builder()
+                .errorCount(1)
+                .httpStatus(BAD_REQUEST)
+                .time(now())
+                .message(exception.getMessage())
                 .build();
     }
 
