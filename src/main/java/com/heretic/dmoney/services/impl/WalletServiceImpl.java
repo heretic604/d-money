@@ -56,13 +56,6 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletResponse updateWallet(WalletRequest walletRequest, UUID id) {
-        Wallet wallet = walletRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID, id)));
-        return mapper.walletEntityToDTO(walletRepository.save(mapper.updateWalletEntity(walletRequest, wallet)));
-    }
-
-    @Override
     public boolean deleteWallet(UUID id) {
         try {
             walletRepository.deleteById(id);

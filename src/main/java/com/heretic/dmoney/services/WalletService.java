@@ -7,18 +7,49 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service processes wallets data
+ */
 @Service
 public interface WalletService {
 
+    /**
+     * Save new wallet in database
+     *
+     * @param walletRequest information about new wallet
+     * @param personID      owner's ID
+     * @return info about new wallet
+     */
     WalletResponse saveWallet(WalletRequest walletRequest, UUID personID);
 
+    /**
+     * Get wallet by ID from database
+     *
+     * @param id walletID
+     * @return wallet info
+     */
     WalletResponse getWallet(UUID id);
 
+    /**
+     * Get wallet by wallet number from database
+     *
+     * @param walletNumber wallet number from controller
+     * @return wallet info
+     */
     WalletResponse getWallet(String walletNumber);
 
+    /**
+     * Get all wallets from database
+     *
+     * @return List with information about all wallets
+     */
     List<WalletResponse> getWallets();
 
-    WalletResponse updateWallet(WalletRequest walletRequest, UUID id);
-
+    /**
+     * Remove wallet from database
+     *
+     * @param id walletID to remove
+     * @return deletion result
+     */
     boolean deleteWallet(UUID id);
 }
