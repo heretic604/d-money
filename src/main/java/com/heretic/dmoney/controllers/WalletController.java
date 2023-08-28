@@ -36,11 +36,6 @@ public class WalletController {
         return walletService.getWallets();
     }
 
-//    @PutMapping(value = "wallet/{walletRequest}/{id}")
-//    WalletResponse updateWallet(@PathVariable WalletRequest walletRequest, @PathVariable UUID id) {
-//        return walletService.updateWallet(walletRequest, id);
-//    }
-
     @DeleteMapping(value = "wallet/{id}")
     public boolean deleteWallet(@PathVariable UUID id) {
         return walletService.deleteWallet(id);

@@ -1,6 +1,5 @@
 package com.heretic.dmoney.dto.requests;
 
-import com.heretic.dmoney.entities.Wallet;
 import com.heretic.dmoney.enums.UserRole;
 import com.heretic.dmoney.enums.UserStatus;
 import jakarta.validation.constraints.Email;
@@ -10,8 +9,6 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.UUID;
 
 import static com.heretic.dmoney.util.Constants.*;
 
@@ -19,15 +16,14 @@ import static com.heretic.dmoney.util.Constants.*;
 @Builder
 public class PersonRequest {
 
-//    @NotBlank(message = INVALID_USERNAME)
+    @NotBlank(message = INVALID_USERNAME)
     private String username;
-//    @NotBlank(message = INVALID_PASSWORD)
+    @NotBlank(message = INVALID_PASSWORD)
     private String password;
-//    @Email(message = INVALID_EMAIL)
+    @Email(message = INVALID_EMAIL)
     private String email;
     private UserStatus status;
     private UserRole role;
     private LocalDate birthday;
     private LocalDateTime registrationTime;
-//    private Set<Wallet> wallets;
 }

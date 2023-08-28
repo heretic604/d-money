@@ -1,21 +1,18 @@
 package com.heretic.dmoney.services.impl;
 
-import com.heretic.dmoney.dto.requests.PersonRequest;
 import com.heretic.dmoney.dto.requests.WalletRequest;
-import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.dto.responses.WalletResponse;
-import com.heretic.dmoney.entities.Person;
 import com.heretic.dmoney.entities.Wallet;
 import com.heretic.dmoney.mappers.EntityDtoMapper;
 import com.heretic.dmoney.repositories.PersonRepository;
 import com.heretic.dmoney.repositories.WalletRepository;
-import com.heretic.dmoney.services.PersonService;
 import com.heretic.dmoney.services.WalletService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_ID;
 import static com.heretic.dmoney.util.Constants.WALLET_NOT_FOUND_BY_USERNAME;
@@ -27,15 +24,7 @@ public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
     private final EntityDtoMapper mapper;
-    private final PersonService personService;
     private final PersonRepository personRepository;
-
-//    @Override
-//    public WalletResponse saveWallet(WalletRequest walletRequest) {
-//        Wallet wallet = mapper.walletDTOtoEntity(walletRequest);
-//        wallet.setPerson(mapper.personRequestIdToEntity(walletRequest.getPersonIdRequest()));
-//        return mapper.walletEntityToDTO(walletRepository.save(wallet));
-//    }
 
     @Override
     public WalletResponse saveWallet(WalletRequest walletRequest, UUID personID) {

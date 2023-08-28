@@ -1,8 +1,7 @@
 package com.heretic.dmoney.services;
 
-import com.heretic.dmoney.dto.responses.OperationResponse;
 import com.heretic.dmoney.dto.requests.OperationRequest;
-import org.springframework.stereotype.Service;
+import com.heretic.dmoney.dto.responses.OperationResponse;
 
 import java.time.LocalDate;
 import java.util.List;

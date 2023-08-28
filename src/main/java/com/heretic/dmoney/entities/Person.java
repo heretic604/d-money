@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.EAGER;
 
@@ -52,6 +53,6 @@ public class Person {
     @Column(name = "REGISTRATION")
     private LocalDateTime registrationTime;
 
-    @OneToMany(mappedBy = "person", fetch = EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "person", fetch = EAGER, cascade = ALL, orphanRemoval = true)
     private List<Wallet> wallets;
 }

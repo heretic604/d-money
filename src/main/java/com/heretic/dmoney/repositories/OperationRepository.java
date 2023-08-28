@@ -9,5 +9,5 @@ import java.util.UUID;
 
 public interface OperationRepository extends JpaRepository<Operation, UUID> {
 
-    List<Operation> getOperationsByTimeContaining (LocalDate date);
+    List<Operation> getOperationsByTimeContaining(LocalDate date);
 }

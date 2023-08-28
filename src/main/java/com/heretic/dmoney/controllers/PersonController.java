@@ -3,7 +3,6 @@ package com.heretic.dmoney.controllers;
 import com.heretic.dmoney.dto.requests.PersonRequest;
 import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.services.PersonService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
