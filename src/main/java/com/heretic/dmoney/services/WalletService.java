@@ -2,15 +2,16 @@ package com.heretic.dmoney.services;
 
 import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.dto.responses.WalletResponse;
+import com.heretic.dmoney.entities.Wallet;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * Service processes wallets data
  */
-@Service
 public interface WalletService {
 
     /**
@@ -36,7 +37,7 @@ public interface WalletService {
      * @param walletNumber wallet number from controller
      * @return wallet info
      */
-    WalletResponse getWallet(String walletNumber);
+    WalletResponse getWallet(Long walletNumber);
 
     /**
      * Get all wallets from database
@@ -44,6 +45,8 @@ public interface WalletService {
      * @return List with information about all wallets
      */
     List<WalletResponse> getWallets();
+
+    Wallet updateWallet(BigDecimal amountDelta, Wallet wallet);
 
     /**
      * Remove wallet from database

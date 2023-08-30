@@ -26,21 +26,21 @@ public class Wallet {
     private UUID walletId;
 
     @Column(name = "WALLET_NUMBER", unique = true, updatable = false)
-    private String walletNumber;
+    private Long walletNumber;
 
     @ManyToOne(fetch = EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "PERSON_ID")
     private Person person;
 
-    @Column(name = "CURRENCY", updatable = false)
+    @Column(name = "CURRENCY", updatable = false, nullable = false)
     private String currency;
 
-    @Column(name = "AMOUNT")
+    @Column(name = "AMOUNT", nullable = false)
     private BigDecimal amount;
 
-    @OneToMany(mappedBy = "sender")
+    @OneToMany(mappedBy = "sender", fetch = EAGER, orphanRemoval = true)
     private List<Operation> incomeOperations;
 
-    @OneToMany(mappedBy = "receiver")
+    @OneToMany(mappedBy = "receiver", fetch = EAGER, orphanRemoval = true)
     private List<Operation> outcomeOperations;
 }

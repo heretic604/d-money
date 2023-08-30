@@ -1,5 +1,6 @@
 package com.heretic.dmoney.dto.requests;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,7 +10,9 @@ import java.math.BigDecimal;
 @Builder
 public class WalletRequest {
 
-    private String walletNumber;
+    @NotBlank
+    private Long walletNumber;
+    @NotBlank
     private String currency;
     private BigDecimal amount;
 }

@@ -12,8 +12,8 @@ import java.util.UUID;
 public class WalletResponse {
 
     private UUID walletId;
-    private String walletNumber;
-    private UUID personID;
+    private Long walletNumber;
+    private UUID personId;
     private String currency;
     private BigDecimal amount;
     private List<OperationResponse> incomeOperations;

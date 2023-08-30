@@ -30,27 +30,27 @@ public class Person {
     @Column(name = "PERSON_ID")
     private UUID personId;
 
-    @Column(name = "USERNAME", unique = true)
+    @Column(name = "USERNAME", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
-    @Column(name = "EMAIL", unique = true)
+    @Column(name = "EMAIL", unique = true, nullable = false)
     private String email;
 
     @Enumerated(STRING)
-    @Column(name = "USER_STATUS")
+    @Column(name = "USER_STATUS", nullable = false)
     private UserStatus status;
 
     @Enumerated(STRING)
-    @Column(name = "USER_ROLE")
+    @Column(name = "USER_ROLE", nullable = false)
     private UserRole role;
 
-    @Column(name = "BIRTHDAY")
+    @Column(name = "BIRTHDAY",updatable = false, nullable = false)
     private LocalDate birthday;
 
-    @Column(name = "REGISTRATION")
+    @Column(name = "REGISTRATION", updatable = false, nullable = false)
     private LocalDateTime registrationTime;
 
     @OneToMany(mappedBy = "person", fetch = EAGER, cascade = ALL, orphanRemoval = true)

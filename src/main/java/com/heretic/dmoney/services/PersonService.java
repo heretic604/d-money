@@ -11,7 +11,6 @@ import java.util.UUID;
  * Service processes users data.
  * Contains CRUD methods
  */
-@Service
 public interface PersonService {
 
     /**

@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * Service processes currency data received from a feign client
  */
-@Service
 public interface CurrencyService {
 
     /**
@@ -24,5 +23,5 @@ public interface CurrencyService {
      *
      * @return List of currencies
      */
-    List<CurrencyResponse> getAllCurrencies();
+    List<CurrencyResponse> getCurrencies();
 }

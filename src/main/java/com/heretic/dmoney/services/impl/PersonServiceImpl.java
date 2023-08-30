@@ -3,7 +3,7 @@ package com.heretic.dmoney.services.impl;
 import com.heretic.dmoney.dto.requests.PersonRequest;
 import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.entities.Person;
-import com.heretic.dmoney.mappers.EntityDtoMapper;
+import com.heretic.dmoney.mappers.PersonMapper;
 import com.heretic.dmoney.repositories.PersonRepository;
 import com.heretic.dmoney.services.PersonService;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,25 +21,26 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
 
+    private final PersonMapper mapper;
     private final PersonRepository personRepository;
-    private final EntityDtoMapper mapper;
 
     @Override
     public PersonResponse savePerson(PersonRequest personRequest) {
-        return mapper.personEntityToDTO(personRepository.save(mapper.personDTOtoEntity(personRequest)));
+        Person savedPerson = personRepository.save(mapper.mapToPerson(personRequest));
+        return mapper.mapToPersonResponse(savedPerson);
     }
 
     @Override
     public PersonResponse getPerson(UUID id) {
         return personRepository.findById(id)
-                .map(mapper::personEntityToDTO)
+                .map(mapper::mapToPersonResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID, id)));
     }
 
     @Override
     public PersonResponse getPerson(String username) {
         return personRepository.findByUsername(username)
-                .map(mapper::personEntityToDTO)
+                .map(mapper::mapToPersonResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(USER_NOT_FOUND_BY_USERNAME, username)));
     }
 
@@ -47,7 +48,7 @@ public class PersonServiceImpl implements PersonService {
     public List<PersonResponse> getPersons() {
         return personRepository.findAll()
                 .stream()
-                .map(mapper::personEntityToDTO)
+                .map(mapper::mapToPersonResponse)
                 .toList();
     }
 
@@ -55,17 +56,13 @@ public class PersonServiceImpl implements PersonService {
     public PersonResponse updatePerson(PersonRequest personRequest, UUID id) {
         Person person = personRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID, id)));
-        return mapper.personEntityToDTO(personRepository.save(mapper.updatePersonEntity(personRequest, person)));
+        Person savedPerson = personRepository.save(mapper.updatePerson(personRequest, person));
+        return mapper.mapToPersonResponse(savedPerson);
     }
 
     @Override
     public boolean deletePerson(UUID id) {
-        try {
-            personRepository.deleteById(id);
-            return true;
-        } catch (EntityNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        }
+        personRepository.deleteById(id);
+        return true;
     }
 }

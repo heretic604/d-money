@@ -13,7 +13,7 @@ import java.util.UUID;
  */
 public interface OperationService {
 
-    OperationResponse saveOperation(OperationRequest operationRequest);
+    OperationResponse createOperation(OperationRequest operationRequest);
 
     OperationResponse getOperation(UUID id);
 

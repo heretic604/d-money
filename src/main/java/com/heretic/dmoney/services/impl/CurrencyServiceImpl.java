@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.heretic.dmoney.util.Constants.CURRENCY_PARAMMODE;
+import static com.heretic.dmoney.util.Constants.CURRENCY_PERIODICITY;
+
 @Service
 @RequiredArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
@@ -16,11 +19,11 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public CurrencyResponse getCurrency(String currency) {
-        return currencyClient.getCurrency(currency);
+        return currencyClient.getCurrency(currency, CURRENCY_PARAMMODE);
     }
 
     @Override
-    public List<CurrencyResponse> getAllCurrencies() {
-        return currencyClient.getCurrencies();
+    public List<CurrencyResponse> getCurrencies() {
+        return currencyClient.getCurrencies(CURRENCY_PERIODICITY);
     }
 }

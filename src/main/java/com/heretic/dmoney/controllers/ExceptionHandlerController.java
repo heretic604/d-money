@@ -4,6 +4,7 @@ import com.heretic.dmoney.dto.responses.ErrorResponse;
 import com.heretic.dmoney.errors.Error;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,7 +25,6 @@ public class ExceptionHandlerController {
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException exception) {
         log.warn(exception.getMessage());
         return ErrorResponse.builder()
-                .errorCount(1)
                 .httpStatus(BAD_REQUEST)
                 .time(now())
                 .message(exception.getMessage())
@@ -39,7 +39,7 @@ public class ExceptionHandlerController {
                 .errorCount(exception.getFieldErrorCount())
                 .time(now())
                 .httpStatus(BAD_REQUEST)
-                .errors(List.copyOf(buildErrors(exception)))
+                .errors(buildErrors(exception))
                 .build();
     }
 
@@ -48,7 +48,6 @@ public class ExceptionHandlerController {
     public ErrorResponse handleValidationException(SQLIntegrityConstraintViolationException exception) {
         log.warn(exception.getMessage());
         return ErrorResponse.builder()
-                .errorCount(1)
                 .httpStatus(BAD_REQUEST)
                 .time(now())
                 .message(exception.getMessage())
@@ -56,8 +55,17 @@ public class ExceptionHandlerController {
     }
 
     private List<Error> buildErrors(MethodArgumentNotValidException exception) {
-        return exception.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> new Error(fieldError.getDefaultMessage(), fieldError.getField()))
+        return exception.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(this::buildError)
                 .toList();
+    }
+
+    private Error buildError(FieldError fieldError) {
+        return Error.builder()
+                .message(fieldError.getDefaultMessage())
+                .fieldName(fieldError.getField())
+                .build();
     }
 }

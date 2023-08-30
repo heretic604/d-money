@@ -17,22 +17,22 @@ public class OperationController {
 
     private final OperationService operationService;
 
-    @PostMapping(value = "operation")
-    public OperationResponse executeOperation(@RequestBody OperationRequest operationRequest) {
-        return operationService.saveOperation(operationRequest);
+    @PostMapping(value = "/operation")
+    public OperationResponse createOperation(@RequestBody OperationRequest operationRequest) {
+        return operationService.createOperation(operationRequest);
     }
 
-    @GetMapping(value = "operation/{id}")
+    @GetMapping(value = "/operation/{id}")
     public OperationResponse getOperation(@PathVariable UUID id) {
         return operationService.getOperation(id);
     }
 
-    @GetMapping(value = "operations")
+    @GetMapping(value = "/operations")
     public List<OperationResponse> getOperations() {
         return operationService.getOperations();
     }
 
-    @GetMapping(value = "operationsByDate")
+    @GetMapping(value = "/operationsByDate")
     public List<OperationResponse> getOperations(LocalDate date) {
         return operationService.getOperations(date);
     }

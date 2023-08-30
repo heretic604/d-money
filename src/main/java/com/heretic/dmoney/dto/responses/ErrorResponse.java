@@ -16,7 +16,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 public class ErrorResponse {
 
     @JsonInclude(NON_NULL)
-    private int errorCount;
+    private Integer errorCount;
     @JsonInclude(NON_NULL)
     private List<Error> errors;
     @JsonInclude(NON_NULL)
