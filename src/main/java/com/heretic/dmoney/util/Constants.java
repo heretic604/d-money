@@ -21,4 +21,9 @@ public final class Constants {
      */
     public static final int CURRENCY_PARAMMODE = 2;
     public static final int CURRENCY_PERIODICITY = 0;
+
+    /**
+     * Currency constants
+     */
+    public static final String DEFAULT_CURRENCY = "BYN";
 }

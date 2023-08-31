@@ -33,24 +33,27 @@ public class Operation {
     private OperationStatus status;
 
     @ManyToOne(cascade = ALL, fetch = EAGER)
-    @JoinColumn(name = "SENDER_WALLET_ID")
+    @JoinColumn(name = "SENDER_WALLET_ID", updatable = false)
     private Wallet sender;
 
     @ManyToOne(cascade = ALL, fetch = EAGER)
-    @JoinColumn(name = "RECEIVER_WALLET_ID")
+    @JoinColumn(name = "RECEIVER_WALLET_ID", updatable = false)
     private Wallet receiver;
 
-    @Column(name = "CURRENCY_OUT", updatable = false, nullable = false)
+    @Column(name = "CURRENCY_OUT", updatable = false)
     private String currencyOut;
 
-    @Column(name = "CURRENCY_IN", updatable = false, nullable = false)
+    @Column(name = "CURRENCY_IN", updatable = false)
     private String currencyIn;
 
-    @Column(name = "AMOUNT_OUT", updatable = false, nullable = false)
+    @Column(name = "AMOUNT_OUT", updatable = false)
     private BigDecimal amountOut;
 
-    @Column(name = "AMOUNT_IN", updatable = false, nullable = false)
+    @Column(name = "AMOUNT_IN", updatable = false)
     private BigDecimal amountIn;
+
+    @Column(name = "EXRATE")
+    private BigDecimal exRate;
 
     @Column(name = "TIME", updatable = false, nullable = false)
     private LocalDateTime time;

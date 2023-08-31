@@ -2,6 +2,7 @@ package com.heretic.dmoney.controllers;
 
 import com.heretic.dmoney.dto.responses.ErrorResponse;
 import com.heretic.dmoney.errors.Error;
+import com.heretic.dmoney.exceptions.NoFundsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.FieldError;
@@ -46,6 +47,17 @@ public class ExceptionHandlerController {
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     @ResponseStatus(BAD_REQUEST)
     public ErrorResponse handleValidationException(SQLIntegrityConstraintViolationException exception) {
+        log.warn(exception.getMessage());
+        return ErrorResponse.builder()
+                .httpStatus(BAD_REQUEST)
+                .time(now())
+                .message(exception.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(NoFundsException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ErrorResponse handleNoFundsException(NoFundsException exception) {
         log.warn(exception.getMessage());
         return ErrorResponse.builder()
                 .httpStatus(BAD_REQUEST)

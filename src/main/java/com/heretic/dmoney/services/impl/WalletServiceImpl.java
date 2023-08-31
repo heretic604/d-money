@@ -49,6 +49,11 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new EntityNotFoundException(format(WALLET_NOT_FOUND_BY_USERNAME, walletNumber)));
     }
 
+    public Wallet getWalletForOperation(Long walletNumber) {
+        return walletRepository.findByWalletNumber(walletNumber)
+                .orElseThrow(() -> new EntityNotFoundException(format(WALLET_NOT_FOUND_BY_USERNAME, walletNumber)));
+    }
+
     @Override
     public List<WalletResponse> getWallets() {
         return walletRepository.findAll()

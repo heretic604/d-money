@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 public class OperationRequest {
 
     private OperationStatus status;
-    private WalletRequest sender;
-    private WalletRequest receiver;
+    private Long senderNumber;
+    private Long receiverNumber;
     private String currencyOut;
     private String currencyIn;
     private BigDecimal amountOut;

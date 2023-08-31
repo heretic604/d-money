@@ -3,7 +3,6 @@ package com.heretic.dmoney.services;
 import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.dto.responses.WalletResponse;
 import com.heretic.dmoney.entities.Wallet;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,6 +37,8 @@ public interface WalletService {
      * @return wallet info
      */
     WalletResponse getWallet(Long walletNumber);
+
+    Wallet getWalletForOperation(Long walletNumber);
 
     /**
      * Get all wallets from database

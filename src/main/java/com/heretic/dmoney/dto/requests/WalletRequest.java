@@ -1,6 +1,7 @@
 package com.heretic.dmoney.dto.requests;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 public class WalletRequest {
 
-    @NotBlank
+    @NotNull
     private Long walletNumber;
     @NotBlank
     private String currency;
