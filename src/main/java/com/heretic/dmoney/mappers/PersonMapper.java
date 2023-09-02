@@ -15,6 +15,8 @@ public interface PersonMapper {
     @Mapping(target = "registrationTime", defaultExpression = "java(java.time.LocalDateTime.now())")
     Person mapToPerson(PersonRequest dto);
 
+    Person mapToPerson(PersonResponse dto);
+
     @Mapping(source = "wallets", target = "walletResponses")
     PersonResponse mapToPersonResponse(Person entity);
 

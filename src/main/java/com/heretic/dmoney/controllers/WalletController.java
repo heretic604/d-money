@@ -3,7 +3,6 @@ package com.heretic.dmoney.controllers;
 import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.dto.responses.WalletResponse;
 import com.heretic.dmoney.services.WalletService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +18,9 @@ public class WalletController {
 
     private final WalletService walletService;
 
-    @PostMapping(value = "/wallet/{personID}")
-    public WalletResponse saveWallet(@Valid @RequestBody WalletRequest walletRequest, @PathVariable UUID personID) {
-        return walletService.saveWallet(walletRequest, personID);
+    @PostMapping(value = "/wallet/{personId}")
+    public WalletResponse saveWallet(@Validated @RequestBody WalletRequest walletRequest, @PathVariable UUID personId) {
+        return walletService.saveWallet(walletRequest, personId);
     }
 
     @GetMapping(value = "/wallet/{id}")

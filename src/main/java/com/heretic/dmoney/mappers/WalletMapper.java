@@ -9,7 +9,7 @@ import org.mapstruct.MappingTarget;
 
 import static org.mapstruct.NullValuePropertyMappingStrategy.IGNORE;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = IGNORE)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = IGNORE, uses = PersonMapper.class)
 public interface WalletMapper {
 
     @Mapping(target = "amount", defaultExpression = "java(java.math.BigDecimal.valueOf(0))")

@@ -28,7 +28,7 @@ public class Wallet {
     @Column(name = "WALLET_NUMBER", unique = true, updatable = false)
     private Long walletNumber;
 
-    @ManyToOne(fetch = EAGER, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "PERSON_ID")
     private Person person;
 

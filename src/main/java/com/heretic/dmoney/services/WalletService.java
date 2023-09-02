@@ -17,10 +17,9 @@ public interface WalletService {
      * Save new wallet in database
      *
      * @param walletRequest information about new wallet
-     * @param personID      owner's ID
      * @return info about new wallet
      */
-    WalletResponse saveWallet(WalletRequest walletRequest, UUID personID);
+    WalletResponse saveWallet(WalletRequest walletRequest, UUID personId);
 
     /**
      * Get wallet by ID from database
