@@ -3,7 +3,7 @@ package com.heretic.dmoney.services;
 import com.heretic.dmoney.dto.requests.PersonRequest;
 import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.entities.Person;
-import com.heretic.dmoney.extensions.person.PersonRequestParameterResolver;
+import com.heretic.dmoney.extensions.PersonRequestParameterResolver;
 import com.heretic.dmoney.mappers.PersonMapper;
 import com.heretic.dmoney.mappers.PersonMapperImpl;
 import com.heretic.dmoney.repositories.PersonRepository;
@@ -49,12 +49,12 @@ class PersonServiceImplTest {
     }
 
     @Test()
-    public void saveValidPersonTest(PersonRequest personRequest) {
+    public void savePersonTest(PersonRequest personRequest) {
         when(personRepository.save(person)).thenReturn(person);
         when(personMapper.mapToPerson(personRequest)).thenReturn(person);
         when(personMapper.mapToPersonResponse(person)).thenReturn(personResponse);
 
-        assertEquals(personRequest.getUsername(), personService.savePerson(personRequest).getUsername());
+        assertEquals(personResponse, personService.savePerson(personRequest));
         verify(personRepository, times(1)).save(person);
         verify(personMapper, times(1)).mapToPersonResponse(person);
         verify(personMapper, times(1)).mapToPerson(personRequest);

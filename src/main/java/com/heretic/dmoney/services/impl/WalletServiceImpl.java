@@ -32,7 +32,6 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public WalletResponse saveWallet(WalletRequest walletRequest, UUID personId) {
         Wallet wallet = walletMapper.mapToWallet(walletRequest);
-//        personRepository.findById(walletRequest.getPersonId()).ifPresent(wallet::setPerson);
         wallet.setPerson(personMapper.mapToPerson(personService.getPerson(personId)));
         Wallet savedWallet = walletRepository.save(wallet);
         return walletMapper.mapToWalletResponse(savedWallet);
@@ -52,11 +51,6 @@ public class WalletServiceImpl implements WalletService {
                 .orElseThrow(() -> new EntityNotFoundException(format(WALLET_NOT_FOUND_BY_USERNAME, walletNumber)));
     }
 
-    public Wallet getWalletForOperation(Long walletNumber) {
-        return walletRepository.findByWalletNumber(walletNumber)
-                .orElseThrow(() -> new EntityNotFoundException(format(WALLET_NOT_FOUND_BY_USERNAME, walletNumber)));
-    }
-
     @Override
     public List<WalletResponse> getWallets() {
         return walletRepository.findAll()
@@ -66,9 +60,8 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Wallet updateWallet(BigDecimal amountDelta, Wallet wallet) {
-        wallet.setAmount(wallet.getAmount().add(amountDelta));
-        return walletRepository.save(wallet);
+    public void updateWallet(BigDecimal amountDelta, UUID id) {
+        walletRepository.updateAmountById(amountDelta, id);
     }
 
     @Override

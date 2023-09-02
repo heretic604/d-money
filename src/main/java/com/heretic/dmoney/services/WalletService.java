@@ -2,7 +2,6 @@ package com.heretic.dmoney.services;
 
 import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.dto.responses.WalletResponse;
-import com.heretic.dmoney.entities.Wallet;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -37,8 +36,6 @@ public interface WalletService {
      */
     WalletResponse getWallet(Long walletNumber);
 
-    Wallet getWalletForOperation(Long walletNumber);
-
     /**
      * Get all wallets from database
      *
@@ -46,7 +43,7 @@ public interface WalletService {
      */
     List<WalletResponse> getWallets();
 
-    Wallet updateWallet(BigDecimal amountDelta, Wallet wallet);
+    void updateWallet(BigDecimal amountDelta, UUID id);
 
     /**
      * Remove wallet from database

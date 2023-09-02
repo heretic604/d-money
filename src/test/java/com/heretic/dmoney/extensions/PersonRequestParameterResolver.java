@@ -1,4 +1,4 @@
-package com.heretic.dmoney.extensions.person;
+package com.heretic.dmoney.extensions;
 
 import com.heretic.dmoney.dto.requests.PersonRequest;
 import org.junit.jupiter.api.extension.ExtensionContext;

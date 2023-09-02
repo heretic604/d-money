@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.EAGER;
 
@@ -32,11 +32,11 @@ public class Operation {
     @Enumerated(STRING)
     private OperationStatus status;
 
-    @ManyToOne(cascade = ALL, fetch = EAGER)
+    @ManyToOne(cascade = MERGE, fetch = EAGER)
     @JoinColumn(name = "SENDER_WALLET_ID", updatable = false)
     private Wallet sender;
 
-    @ManyToOne(cascade = ALL, fetch = EAGER)
+    @ManyToOne(cascade = MERGE, fetch = EAGER)
     @JoinColumn(name = "RECEIVER_WALLET_ID", updatable = false)
     private Wallet receiver;
 

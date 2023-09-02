@@ -5,6 +5,7 @@ import com.heretic.dmoney.dto.responses.OperationResponse;
 import com.heretic.dmoney.entities.Operation;
 import com.heretic.dmoney.exceptions.NoFundsException;
 import com.heretic.dmoney.mappers.OperationMapper;
+import com.heretic.dmoney.mappers.WalletMapper;
 import com.heretic.dmoney.repositories.OperationRepository;
 import com.heretic.dmoney.services.CurrencyService;
 import com.heretic.dmoney.services.OperationService;
@@ -30,28 +31,29 @@ public class OperationServiceImpl implements OperationService {
 
     private final WalletService walletService;
     private final CurrencyService currencyService;
-    private final OperationMapper mapper;
+    private final OperationMapper operationMapper;
+    private final WalletMapper walletMapper;
     private final OperationRepository operationRepository;
 
     @Override
     public OperationResponse createOperation(OperationRequest operationRequest) {
-        Operation operation = mapper.mapToOperation(operationRequest);
+        Operation operation = operationMapper.mapToOperation(operationRequest);
 
         if (operationRequest.getSenderNumber() != null) {
-            operation.setSender(walletService.getWalletForOperation(operationRequest.getSenderNumber()));
+            operation.setSender(walletMapper.mapToWallet(walletService.getWallet(operationRequest.getSenderNumber())));
         }
         if (operationRequest.getReceiverNumber() != null) {
-            operation.setReceiver(walletService.getWalletForOperation(operationRequest.getReceiverNumber()));
+            operation.setReceiver(walletMapper.mapToWallet(walletService.getWallet(operationRequest.getReceiverNumber())));
         }
 
         operation = operationRepository.save(executeOperation(operation));
-        return mapper.mapToOperationResponse(operation);
+        return operationMapper.mapToOperationResponse(operation);
     }
 
     @Override
     public OperationResponse getOperation(UUID id) {
         return operationRepository.findById(id)
-                .map(mapper::mapToOperationResponse)
+                .map(operationMapper::mapToOperationResponse)
                 .orElseThrow(() -> new EntityNotFoundException(format(ENTITY_NOT_FOUND_BY_ID, id)));
     }
 
@@ -59,7 +61,7 @@ public class OperationServiceImpl implements OperationService {
     public List<OperationResponse> getOperations() {
         return operationRepository.findAll()
                 .stream()
-                .map(mapper::mapToOperationResponse)
+                .map(operationMapper::mapToOperationResponse)
                 .toList();
     }
 
@@ -67,7 +69,7 @@ public class OperationServiceImpl implements OperationService {
     public List<OperationResponse> getOperations(LocalDate date) {
         return operationRepository.getOperationsByTimeContaining(date)
                 .stream()
-                .map(mapper::mapToOperationResponse)
+                .map(operationMapper::mapToOperationResponse)
                 .toList();
     }
 
@@ -84,7 +86,7 @@ public class OperationServiceImpl implements OperationService {
     private Operation executeDeposit(Operation operation) {
         BigDecimal rate = getExRate(operation.getReceiver().getCurrency(), operation.getCurrencyOut());
         BigDecimal amountIn = operation.getAmountOut().multiply(rate);
-        walletService.updateWallet(amountIn, operation.getReceiver());
+        walletService.updateWallet(amountIn, operation.getReceiver().getWalletId());
         operation.setAmountIn(amountIn);
         operation.setExRate(rate);
         operation.setStatus(SUCCEED);
@@ -95,7 +97,7 @@ public class OperationServiceImpl implements OperationService {
         BigDecimal rate = getExRate(operation.getCurrencyIn(), operation.getSender().getCurrency());
         if (operation.getSender().getAmount().compareTo(operation.getAmountOut()) >= 0) {
             BigDecimal amountIn = operation.getAmountOut().multiply(rate);
-            walletService.updateWallet(operation.getAmountOut().negate(), operation.getSender());
+            walletService.updateWallet(operation.getAmountOut().negate(), operation.getSender().getWalletId());
             operation.setAmountIn(amountIn);
             operation.setExRate(rate);
             operation.setStatus(SUCCEED);
@@ -109,8 +111,8 @@ public class OperationServiceImpl implements OperationService {
         BigDecimal rate = getExRate(operation.getReceiver().getCurrency(), operation.getSender().getCurrency());
         if (operation.getSender().getAmount().multiply(rate).compareTo(operation.getAmountOut()) >= 0) {
             BigDecimal amountIn = operation.getAmountOut().multiply(rate);
-            walletService.updateWallet(operation.getAmountOut().negate(), operation.getSender());
-            walletService.updateWallet(amountIn, operation.getReceiver());
+            walletService.updateWallet(operation.getAmountOut().negate(), operation.getSender().getWalletId());
+            walletService.updateWallet(amountIn, operation.getReceiver().getWalletId());
 //            operation.setCurrencyIn(operation.getReceiver().getCurrency());
 //            operation.setCurrencyOut(operation.getSender().getCurrency());
             operation.setAmountIn(amountIn);
