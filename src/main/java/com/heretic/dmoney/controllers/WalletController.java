@@ -1,5 +1,6 @@
 package com.heretic.dmoney.controllers;
 
+import com.heretic.dmoney.aspects.ExcludeLogging;
 import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.dto.responses.WalletResponse;
 import com.heretic.dmoney.services.WalletService;
@@ -33,6 +34,7 @@ public class WalletController {
         return walletService.getWallet(walletNumber);
     }
 
+    @ExcludeLogging
     @GetMapping(value = "/wallets")
     public List<WalletResponse> getWallets() {
         return walletService.getWallets();

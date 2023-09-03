@@ -113,8 +113,6 @@ public class OperationServiceImpl implements OperationService {
             BigDecimal amountIn = operation.getAmountOut().multiply(rate);
             walletService.updateWallet(operation.getAmountOut().negate(), operation.getSender().getWalletId());
             walletService.updateWallet(amountIn, operation.getReceiver().getWalletId());
-//            operation.setCurrencyIn(operation.getReceiver().getCurrency());
-//            operation.setCurrencyOut(operation.getSender().getCurrency());
             operation.setAmountIn(amountIn);
             operation.setExRate(rate);
             operation.setStatus(SUCCEED);

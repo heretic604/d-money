@@ -1,5 +1,6 @@
 package com.heretic.dmoney.controllers;
 
+import com.heretic.dmoney.aspects.ExcludeLogging;
 import com.heretic.dmoney.dto.responses.CurrencyResponse;
 import com.heretic.dmoney.services.CurrencyService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class CurrencyController {
         return currencyService.getCurrency(currency);
     }
 
+    @ExcludeLogging
     @GetMapping("/currencies")
     public List<CurrencyResponse> getCurrencies() {
         return currencyService.getCurrencies();

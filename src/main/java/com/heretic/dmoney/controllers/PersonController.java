@@ -1,5 +1,6 @@
 package com.heretic.dmoney.controllers;
 
+import com.heretic.dmoney.aspects.ExcludeLogging;
 import com.heretic.dmoney.dto.requests.PersonRequest;
 import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.services.PersonService;
@@ -34,6 +35,7 @@ public class PersonController {
         return personService.getPerson(username);
     }
 
+    @ExcludeLogging
     @GetMapping(value = "/persons")
     public List<PersonResponse> getPersons() {
         return personService.getPersons();

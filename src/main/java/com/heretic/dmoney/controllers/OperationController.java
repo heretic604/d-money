@@ -1,5 +1,6 @@
 package com.heretic.dmoney.controllers;
 
+import com.heretic.dmoney.aspects.ExcludeLogging;
 import com.heretic.dmoney.dto.requests.OperationRequest;
 import com.heretic.dmoney.dto.responses.OperationResponse;
 import com.heretic.dmoney.services.OperationService;
@@ -27,6 +28,7 @@ public class OperationController {
         return operationService.getOperation(id);
     }
 
+    @ExcludeLogging
     @GetMapping(value = "/operations")
     public List<OperationResponse> getOperations() {
         return operationService.getOperations();
