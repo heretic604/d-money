@@ -87,21 +87,15 @@ public class OperationServiceImpl implements OperationService {
         BigDecimal rate = getExRate(operation.getReceiver().getCurrency(), operation.getCurrencyOut());
         BigDecimal amountIn = operation.getAmountOut().multiply(rate);
         walletService.updateWallet(amountIn, operation.getReceiver().getWalletId());
-        operation.setAmountIn(amountIn);
-        operation.setExRate(rate);
-        operation.setStatus(SUCCEED);
-        return operation;
+        return enrichOperation(operation, amountIn, rate);
     }
 
     private Operation executeWithdrawal(Operation operation) {
         BigDecimal rate = getExRate(operation.getCurrencyIn(), operation.getSender().getCurrency());
-        if (operation.getSender().getAmount().compareTo(operation.getAmountOut()) >= 0) {
+        if (isSufficientFunds(operation, rate)) {
             BigDecimal amountIn = operation.getAmountOut().multiply(rate);
             walletService.updateWallet(operation.getAmountOut().negate(), operation.getSender().getWalletId());
-            operation.setAmountIn(amountIn);
-            operation.setExRate(rate);
-            operation.setStatus(SUCCEED);
-            return operation;
+            return enrichOperation(operation, amountIn, rate);
         } else {
             throw new NoFundsException(NO_FUNDS);
         }
@@ -109,14 +103,11 @@ public class OperationServiceImpl implements OperationService {
 
     private Operation executeTransfer(Operation operation) {
         BigDecimal rate = getExRate(operation.getReceiver().getCurrency(), operation.getSender().getCurrency());
-        if (operation.getSender().getAmount().multiply(rate).compareTo(operation.getAmountOut()) >= 0) {
+        if (isSufficientFunds(operation, rate)) {
             BigDecimal amountIn = operation.getAmountOut().multiply(rate);
             walletService.updateWallet(operation.getAmountOut().negate(), operation.getSender().getWalletId());
             walletService.updateWallet(amountIn, operation.getReceiver().getWalletId());
-            operation.setAmountIn(amountIn);
-            operation.setExRate(rate);
-            operation.setStatus(SUCCEED);
-            return operation;
+            return enrichOperation(operation, amountIn, rate);
         } else {
             throw new NoFundsException(NO_FUNDS);
         }
@@ -140,5 +131,16 @@ public class OperationServiceImpl implements OperationService {
             rateOut = currencyService.getCurrency(currencyOut).getRate();
         }
         return rateOut.divide(rateIn, 2, HALF_UP);
+    }
+
+    private Operation enrichOperation(Operation operation, BigDecimal amountIn, BigDecimal rate) {
+        operation.setAmountIn(amountIn);
+        operation.setExRate(rate);
+        operation.setStatus(SUCCEED);
+        return operation;
+    }
+
+    private boolean isSufficientFunds(Operation operation, BigDecimal rate) {
+        return operation.getSender().getAmount().multiply(rate).compareTo(operation.getAmountOut()) >= 0;
     }
 }
