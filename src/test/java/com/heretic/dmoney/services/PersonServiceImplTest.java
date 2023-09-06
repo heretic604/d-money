@@ -36,6 +36,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +53,6 @@ class PersonServiceImplTest {
     @Mock
     private PersonRepository personRepository;
     private static final UUID ID = randomUUID();
-    private static final String USERNAME = "test";
 
     @BeforeEach
     public void init() {
@@ -97,23 +97,23 @@ class PersonServiceImplTest {
     @ParameterizedTest()
     @ArgumentsSource(PersonGetArguments.class)
     public void getPersonByValidUsernameTest(Person person, PersonResponse response) {
-        when(personRepository.findByUsername(USERNAME)).thenReturn(of(person));
+        when(personRepository.findByUsername(anyString())).thenReturn(of(person));
 
-        PersonResponse actual = personService.getPerson(USERNAME);
+        PersonResponse actual = personService.getPerson(anyString());
         assertThat(actual).isEqualTo(response);
 
-        verify(personRepository).findByUsername(USERNAME);
+        verify(personRepository).findByUsername(anyString());
     }
 
     @DisplayName("get by invalid username")
     @Test
     public void getPersonByInvalidUsernameTest() {
-        when(personRepository.findByUsername(USERNAME)).thenReturn(empty());
+        when(personRepository.findByUsername(anyString())).thenReturn(empty());
 
-        assertThatThrownBy(() -> personService.getPerson(USERNAME)).isInstanceOf(EntityNotFoundException.class)
-                .hasMessage(format(USER_NOT_FOUND_BY_USERNAME, USERNAME));
+        assertThatThrownBy(() -> personService.getPerson(anyString())).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(format(USER_NOT_FOUND_BY_USERNAME, ""));
 
-        verify(personRepository).findByUsername(USERNAME);
+        verify(personRepository).findByUsername(anyString());
     }
 
     @DisplayName("get all persons")

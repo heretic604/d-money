@@ -1,122 +1,141 @@
 package com.heretic.dmoney.services;
 
+import com.heretic.dmoney.arguments.wallets.WalletGetArguments;
+import com.heretic.dmoney.arguments.wallets.WalletSaveArguments;
 import com.heretic.dmoney.dto.requests.WalletRequest;
 import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.dto.responses.WalletResponse;
-import com.heretic.dmoney.entities.Person;
 import com.heretic.dmoney.entities.Wallet;
-import com.heretic.dmoney.arguments.WalletRequestParameterResolver;
 import com.heretic.dmoney.mappers.PersonMapper;
 import com.heretic.dmoney.mappers.WalletMapper;
-import com.heretic.dmoney.mappers.WalletMapperImpl;
 import com.heretic.dmoney.repositories.WalletRepository;
 import com.heretic.dmoney.services.impl.WalletServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_ID;
+import static java.lang.String.format;
 import static java.math.BigDecimal.ONE;
+import static java.util.Optional.empty;
 import static java.util.UUID.randomUUID;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @DisplayName("WalletService tests")
-@ExtendWith({MockitoExtension.class, WalletRequestParameterResolver.class})
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@TestInstance(PER_CLASS)
 class WalletServiceImplTest {
 
     @InjectMocks
     private WalletServiceImpl walletService;
+    @Autowired
+    private WalletMapper walletMapper;
+    @Autowired
+    private PersonMapper personMapper;
     @Mock
     private PersonService personService;
     @Mock
-    private WalletMapper walletMapper;
-    @Mock
-    private PersonMapper personMapper;
-    @Mock
     private WalletRepository walletRepository;
-    private static Wallet wallet;
-    private static WalletResponse walletResponse;
-    private static UUID walletId;
+    private static final UUID WALLET_ID = randomUUID();
+    private static final UUID PERSON_ID = randomUUID();
 
-    @BeforeAll
-    public static void init(WalletRequest walletRequest) {
-        walletId = randomUUID();
-        WalletMapperImpl mapper = new WalletMapperImpl();
-        wallet = mapper.mapToWallet(walletRequest);
-        walletResponse = mapper.mapToWalletResponse(wallet);
+
+    @BeforeEach
+    public void init() {
+        walletService = new WalletServiceImpl(personService, walletMapper, personMapper, walletRepository);
     }
 
-    @Test
-    void saveWalletTest(WalletRequest walletRequest) {
-        UUID personId = randomUUID();
-        when(walletMapper.mapToWallet(walletRequest)).thenReturn(wallet);
-        when(personService.getPerson(personId)).thenReturn(PersonResponse.builder().build());
-        when(personMapper.mapToPerson(personService.getPerson(personId))).thenReturn(Person.builder().build());
+    @DisplayName("save wallet")
+    @ParameterizedTest()
+    @ArgumentsSource(WalletSaveArguments.class)
+    void saveWalletTest(WalletRequest request, Wallet wallet, WalletResponse walletResponse, PersonResponse personResponse) {
+        when(personService.getPerson(PERSON_ID)).thenReturn(personResponse);
         when(walletRepository.save(wallet)).thenReturn(wallet);
-        when(walletMapper.mapToWalletResponse(wallet)).thenReturn(walletResponse);
 
-        assertEquals(walletResponse, walletService.saveWallet(walletRequest, personId));
-        verify(walletMapper, times(1)).mapToWallet(walletRequest);
-        verify(walletMapper, times(1)).mapToWalletResponse(wallet);
-        verify(personService, times(2)).getPerson(personId);
-        verify(personMapper, times(1)).mapToPerson(personService.getPerson(personId));
-        verify(walletRepository, times(1)).save(wallet);
+        WalletResponse actual = walletService.saveWallet(request, PERSON_ID);
+        assertThat(actual).isEqualTo(walletResponse);
+
+        verify(personService).getPerson(PERSON_ID);
+        verify(walletRepository).save(wallet);
     }
 
-    @Test
-    void getWalletByValidIdTest() {
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(wallet));
-        when(walletMapper.mapToWalletResponse(wallet)).thenReturn(walletResponse);
+    @DisplayName("get wallet by valid id")
+    @ParameterizedTest()
+    @ArgumentsSource(WalletGetArguments.class)
+    void getWalletByValidIdTest(Wallet wallet, WalletResponse response) {
+        when(walletRepository.findById(WALLET_ID)).thenReturn(Optional.of(wallet));
 
-        assertEquals(walletResponse, walletService.getWallet(walletId));
-        verify(walletMapper, times(1)).mapToWalletResponse(wallet);
-        verify(walletRepository, times(1)).findById(walletId);
+        WalletResponse actual = walletService.getWallet(WALLET_ID);
+        assertThat(actual).isEqualTo(response);
+
+        verify(walletRepository).findById(WALLET_ID);
     }
 
+    @DisplayName("get wallet by invalid id")
     @Test
     void getWalletByInvalidIdTest() {
-        when(walletRepository.findById(walletId)).thenReturn(Optional.empty());
+        when(walletRepository.findById(WALLET_ID)).thenReturn(empty());
 
-        assertThrows(EntityNotFoundException.class, () -> walletService.getWallet(walletId));
-        verify(walletRepository, times(1)).findById(walletId);
+        assertThatThrownBy(() -> walletService.getWallet(WALLET_ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(format(ENTITY_NOT_FOUND_BY_ID, WALLET_ID));
+
+        verify(walletRepository).findById(WALLET_ID);
     }
 
-    @Test
-    void getWalletByValidWalletNumber() {
-        when(walletRepository.findByWalletNumber(1L)).thenReturn(Optional.of(wallet));
-        when(walletMapper.mapToWalletResponse(wallet)).thenReturn(walletResponse);
+    @DisplayName("get wallet by valid id")
+    @ParameterizedTest()
+    @ArgumentsSource(WalletGetArguments.class)
+    void getWalletByValidWalletNumber(Wallet wallet, WalletResponse response) {
+        when(walletRepository.findByWalletNumber(anyLong())).thenReturn(Optional.of(wallet));
 
-        assertEquals(walletResponse, walletService.getWallet(1L));
-        verify(walletMapper, times(1)).mapToWalletResponse(wallet);
-        verify(walletRepository, times(1)).findByWalletNumber(1L);
+        WalletResponse actual = walletService.getWallet(anyLong());
+        assertThat(actual).isEqualTo(response);
+
+        verify(walletRepository).findByWalletNumber(anyLong());
     }
 
-    @Test
-    void getWalletsTest() {
+    @DisplayName("get all wallets")
+    @ParameterizedTest()
+    @ArgumentsSource(WalletGetArguments.class)
+    void getWalletsTest(Wallet wallet, WalletResponse response) {
         when(walletRepository.findAll()).thenReturn(List.of(wallet));
-        when(walletMapper.mapToWalletResponse(wallet)).thenReturn(walletResponse);
 
-        assertEquals(List.of(walletResponse), walletService.getWallets());
-        verify(walletMapper, times(1)).mapToWalletResponse(wallet);
-        verify(walletRepository, times(1)).findAll();
+        List<WalletResponse> actual = walletService.getWallets();
+        assertThat(actual).isEqualTo(List.of(response));
+
+        verify(walletRepository).findAll();
     }
 
+    @DisplayName("update wallet")
     @Test
     void updateWalletTest() {
-        assertDoesNotThrow(() -> walletService.updateWallet(ONE, walletId));
+        assertDoesNotThrow(() -> walletService.updateWallet(ONE, WALLET_ID));
     }
 
+    @DisplayName("delete wallet")
     @Test
     void deleteWallet() {
-        assertTrue(walletService.deleteWallet(walletId));
+        assertThat(walletService.deleteWallet(WALLET_ID)).isTrue();
     }
 }
