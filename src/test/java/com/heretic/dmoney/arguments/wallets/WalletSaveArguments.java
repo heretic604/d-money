@@ -29,13 +29,11 @@ public class WalletSaveArguments implements ArgumentsProvider {
             .birthday(of(2000, 1, 1))
             .registrationTime(of(2020, 2, 2, 16, 0))
             .build();
-
     private static final WalletRequest WALLET_REQUEST = WalletRequest.builder()
             .walletNumber(1L)
             .currency(DEFAULT_CURRENCY)
             .amount(TEN)
             .build();
-
     private static final Wallet WALLET = Wallet.builder()
             .walletNumber(1L)
             .currency(DEFAULT_CURRENCY)

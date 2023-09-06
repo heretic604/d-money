@@ -1,16 +1,12 @@
 package com.heretic.dmoney.services;
 
+import com.heretic.dmoney.arguments.operations.*;
 import com.heretic.dmoney.dto.requests.OperationRequest;
+import com.heretic.dmoney.dto.responses.CurrencyResponse;
 import com.heretic.dmoney.dto.responses.OperationResponse;
 import com.heretic.dmoney.dto.responses.WalletResponse;
 import com.heretic.dmoney.entities.Operation;
-import com.heretic.dmoney.entities.Wallet;
-import com.heretic.dmoney.enums.OperationStatus;
 import com.heretic.dmoney.exceptions.NoFundsException;
-import com.heretic.dmoney.arguments.operations.DepositOperationsSameCurrenciesArgumentProvider;
-import com.heretic.dmoney.arguments.operations.TransferOperationsSameCurrenciesArgumentProvider;
-import com.heretic.dmoney.arguments.operations.WalletDataForOperationsParameterResolver;
-import com.heretic.dmoney.arguments.operations.WithdrawalOperationsSameCurrenciesArgumentProvider;
 import com.heretic.dmoney.mappers.OperationMapperImpl;
 import com.heretic.dmoney.mappers.WalletMapperImpl;
 import com.heretic.dmoney.repositories.OperationRepository;
@@ -26,186 +22,145 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
-import static com.heretic.dmoney.util.Constants.DEFAULT_CURRENCY;
-import static java.math.BigDecimal.*;
-import static java.time.LocalDate.now;
+import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_ID;
+import static com.heretic.dmoney.util.Constants.NO_FUNDS;
+import static java.lang.String.format;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.UUID.randomUUID;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.Mockito.*;
 
-//@RunWith(SpringRunner.class)
-//@RunWith(MockitoJUnitRunner.class)
 @DisplayName("OperationService tests")
 @ExtendWith(MockitoExtension.class)
-//@ExtendWith(SpringExtension.class)
 @SpringBootTest
-//@TestConfiguration
 class OperationServiceImplTest {
 
     @InjectMocks
     private OperationServiceImpl operationService;
-    @Mock
-    private static WalletService walletService;
     @Autowired
     private OperationMapperImpl operationMapper;
     @Autowired
     private WalletMapperImpl walletMapper;
     @Mock
+    private static WalletService walletService;
+    @Mock
     private static OperationRepository operationRepository;
     @Mock
     private static CurrencyService currencyService;
-    private static Wallet sender;
-    private static Wallet receiver;
+    private static final UUID ID = randomUUID();
+
+    @BeforeEach
+    public void init() {
+        operationService = new OperationServiceImpl(
+                walletService,
+                currencyService,
+                operationMapper,
+                walletMapper,
+                operationRepository);
+    }
 
     @Nested
     @DisplayName("with same currency and sufficient funds")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @ExtendWith(WalletDataForOperationsParameterResolver.class)
-//    @SpringBootTest
+    @TestInstance(PER_CLASS)
     public class SufficientFunds {
-//        @InjectMocks
-//        private static OperationServiceImpl operationService;
-//        @Mock
-//        private WalletService walletService;
-//        @Autowired
-//        private OperationMapper operationMapper;
-//        @Autowired
-//        private WalletMapperImpl walletMapper;
-//        @Mock
-//        private OperationRepository operationRepository;
-//        @Mock
-//        private CurrencyService currencyService;
-        private Wallet sender;
-        private Wallet receiver;
-        private Operation operation1;
-
-        @BeforeAll
-        public void setUp(){
-
-        }
-
-        @BeforeEach
-        public void init(Wallet walletParameter) {
-            operationService = new OperationServiceImpl(walletService, currencyService, operationMapper, walletMapper, operationRepository);
-            sender = walletParameter;
-            sender.setCurrency(DEFAULT_CURRENCY);
-            sender.setAmount(valueOf(100L));
-            receiver = walletParameter;
-            receiver.setCurrency(DEFAULT_CURRENCY);
-            receiver.setAmount(valueOf(100L));
-        }
 
         @DisplayName("create deposit operation")
         @ParameterizedTest
-        @ArgumentsSource(DepositOperationsSameCurrenciesArgumentProvider.class)
-        public void createDepositOperationTest(OperationRequest request, Operation operation, OperationResponse response) {
-            operation1 = operation;
-            operation1.setReceiver(receiver);
-            Operation enrichOperation = operation1;
-            enrichOperation.setExRate(ONE);
-            enrichOperation.setAmountIn(TEN);
-            enrichOperation.setStatus(OperationStatus.SUCCEED);
-//            operation1.setOperationId(UUID.randomUUID());
-//            when(operationMapper.mapToOperation(request)).thenReturn(operation);
-            when(walletService.getWallet(anyLong())).thenReturn(walletMapper.mapToWalletResponse(receiver));
-//            when(walletMapper.mapToWallet(WalletResponse.builder().build())).thenReturn(operation.getReceiver());
-            when(operationRepository.save(enrichOperation)).thenReturn(enrichOperation);
-//            when(operationMapper.mapToOperationResponse(operation)).thenReturn(response);
+        @ArgumentsSource(SaveDepositOperationEqualCurrenciesArguments.class)
+        public void createDepositOperationTest(OperationRequest request, Operation operation, OperationResponse response, WalletResponse walletResponse) {
+            when(walletService.getWallet(anyLong())).thenReturn(walletResponse);
+            when(operationRepository.save(operation)).thenReturn(operation);
 
-            assertEquals(response, operationService.createOperation(request));
-//            verify(operationMapper, times(1)).mapToOperation(request);
-            verify(walletService, times(1)).getWallet(request.getReceiverNumber());
-//            verify(walletMapper, times(1)).mapToWallet(WalletResponse.builder().build());
-//            verify(operationRepository, times(1)).save(operation1);
-//            verify(operationMapper, times(1)).mapToOperationResponse(operation);
+            OperationResponse actual = operationService.createOperation(request);
+            assertThat(actual).isEqualTo(response);
+
+            verify(walletService).getWallet(anyLong());
+            verify(operationRepository).save(operation);
         }
 
         @DisplayName("create withdrawal operation")
         @ParameterizedTest
-        @ArgumentsSource(WithdrawalOperationsSameCurrenciesArgumentProvider.class)
-        public void createWithdrawalOperationTest(OperationRequest request, Operation operation, OperationResponse response) {
-            operation.setSender(sender);
-            when(operationMapper.mapToOperation(request)).thenReturn(operation);
-            when(walletService.getWallet(request.getSenderNumber())).thenReturn(WalletResponse.builder().build());
-            when(walletMapper.mapToWallet(WalletResponse.builder().build())).thenReturn(operation.getSender());
+        @ArgumentsSource(SaveWithdrawalOperationsEqualCurrenciesArguments.class)
+        public void createWithdrawalOperationTest(OperationRequest request, Operation operation, OperationResponse response, WalletResponse walletResponse) {
+            when(walletService.getWallet(anyLong())).thenReturn(walletResponse);
             when(operationRepository.save(operation)).thenReturn(operation);
-            when(operationMapper.mapToOperationResponse(operation)).thenReturn(response);
 
-            assertEquals(response, operationService.createOperation(request));
-            verify(operationMapper, times(1)).mapToOperation(request);
-            verify(walletService, times(1)).getWallet(request.getSenderNumber());
-            verify(walletMapper, times(1)).mapToWallet(WalletResponse.builder().build());
-            verify(operationRepository, times(1)).save(operation);
-            verify(operationMapper, times(1)).mapToOperationResponse(operation);
+            OperationResponse actual = operationService.createOperation(request);
+            assertThat(actual).isEqualTo(response);
+
+            verify(walletService).getWallet(anyLong());
+            verify(operationRepository).save(operation);
         }
 
         @DisplayName("create transfer operation")
         @ParameterizedTest
-        @ArgumentsSource(TransferOperationsSameCurrenciesArgumentProvider.class)
-        public void createTransferOperationTest(OperationRequest request, Operation operation, OperationResponse response) {
-            operation.setSender(sender);
-            operation.setReceiver(receiver);
-            when(operationMapper.mapToOperation(request)).thenReturn(operation);
-            when(walletService.getWallet(request.getSenderNumber())).thenReturn(WalletResponse.builder().build());
-            when(walletMapper.mapToWallet(WalletResponse.builder().build())).thenReturn(operation.getSender());
+        @ArgumentsSource(SaveTransferOperationEqualCurrenciesArguments.class)
+        public void createTransferOperationTest(OperationRequest request, Operation operation, OperationResponse response, WalletResponse walletResponse) {
+            when(walletService.getWallet(anyLong())).thenReturn(walletResponse);
             when(operationRepository.save(operation)).thenReturn(operation);
-            when(operationMapper.mapToOperationResponse(operation)).thenReturn(response);
 
-            assertEquals(response, operationService.createOperation(request));
-            verify(operationMapper, times(1)).mapToOperation(request);
-            verify(walletService, times(2)).getWallet(request.getSenderNumber());
-            verify(walletMapper, times(2)).mapToWallet(WalletResponse.builder().build());
-            verify(operationRepository, times(1)).save(operation);
-            verify(operationMapper, times(1)).mapToOperationResponse(operation);
+            OperationResponse actual = operationService.createOperation(request);
+            assertThat(actual).isEqualTo(response);
+
+            verify(walletService, times(2)).getWallet(anyLong());
+            verify(operationRepository).save(operation);
         }
 
         @DisplayName("get by valid ID")
         @ParameterizedTest
-        @ArgumentsSource(DepositOperationsSameCurrenciesArgumentProvider.class)
-        public void getOperationByValidIdTest(OperationRequest request, Operation operation, OperationResponse response) {
-            when(operationRepository.findById(operation.getOperationId())).thenReturn(Optional.of(operation));
-            when(operationMapper.mapToOperationResponse(operation)).thenReturn(response);
+        @ArgumentsSource(GetOperationArguments.class)
+        public void getOperationByValidIdTest(Operation operation, OperationResponse response) {
+            when(operationRepository.findById(ID)).thenReturn(of(operation));
 
-            assertEquals(response, operationService.getOperation(operation.getOperationId()));
-            verify(operationRepository, times(1)).findById(operation.getOperationId());
-            verify(operationMapper, times(1)).mapToOperationResponse(operation);
+            OperationResponse actual = operationService.getOperation(ID);
+            assertThat(actual).isEqualTo(response);
+
+            assertEquals(response, operationService.getOperation(ID));
+            verify(operationRepository, times(2)).findById(ID);
         }
 
         @DisplayName("get by invalid ID")
-        @ParameterizedTest
-        @ArgumentsSource(DepositOperationsSameCurrenciesArgumentProvider.class)
-        public void getOperationByInvalidIdTest(OperationRequest request, Operation operation, OperationResponse response) {
-            when(operationRepository.findById(operation.getOperationId())).thenReturn(Optional.empty());
+        @Test
+        public void getOperationByInvalidIdTest() {
+            when(operationRepository.findById(ID)).thenReturn(empty());
 
-            assertThrows(EntityNotFoundException.class, () -> operationService.getOperation(operation.getOperationId()));
-            verify(operationRepository, times(1)).findById(operation.getOperationId());
+            assertThatThrownBy(() -> operationService.getOperation(ID)).isInstanceOf(EntityNotFoundException.class)
+                    .hasMessage(format(ENTITY_NOT_FOUND_BY_ID, ID));
+
+            verify(operationRepository).findById(ID);
         }
 
         @DisplayName("get all operations")
         @ParameterizedTest
-        @ArgumentsSource(DepositOperationsSameCurrenciesArgumentProvider.class)
-        public void getOperationsTest(OperationRequest request, Operation operation, OperationResponse response) {
+        @ArgumentsSource(GetOperationArguments.class)
+        public void getOperationsTest(Operation operation, OperationResponse response) {
             when(operationRepository.findAll()).thenReturn(List.of(operation));
-            when(operationMapper.mapToOperationResponse(operation)).thenReturn(response);
 
-            assertEquals(List.of(response), operationService.getOperations());
-            verify(operationRepository, times(1)).findAll();
-            verify(operationMapper, times(1)).mapToOperationResponse(operation);
+            List<OperationResponse> actual = operationService.getOperations();
+            assertThat(actual).isEqualTo(List.of(response));
+
+            verify(operationRepository).findAll();
         }
 
         @DisplayName("get operations by date")
         @ParameterizedTest
-        @ArgumentsSource(DepositOperationsSameCurrenciesArgumentProvider.class)
-        public void getOperationsByDate(OperationRequest request, Operation operation, OperationResponse response) {
-            when(operationRepository.getOperationsByTimeContaining(now())).thenReturn(List.of(operation));
-            when(operationMapper.mapToOperationResponse(operation)).thenReturn(response);
+        @ArgumentsSource(GetOperationArguments.class)
+        public void getOperationsByDate(Operation operation, OperationResponse response) {
+            LocalDate date = LocalDate.of(2023, 1, 1);
 
-            assertEquals(List.of(response), operationService.getOperations(now()));
-            verify(operationRepository, times(1)).getOperationsByTimeContaining(now());
-            verify(operationMapper, times(1)).mapToOperationResponse(operation);
+            when(operationRepository.getOperationsByTimeContaining(date)).thenReturn(List.of(operation));
+
+            List<OperationResponse> actual = operationService.getOperations(date);
+            assertThat(actual).isEqualTo(List.of(response));
+            verify(operationRepository).getOperationsByTimeContaining(date);
         }
     }
 
@@ -215,30 +170,26 @@ class OperationServiceImplTest {
 
         @DisplayName("create withdrawal operation")
         @ParameterizedTest
-        @ArgumentsSource(WithdrawalOperationsSameCurrenciesArgumentProvider.class)
-        public void createWithdrawalOperationTest(OperationRequest request, Operation operation, OperationResponse response) {
-            when(operationMapper.mapToOperation(request)).thenReturn(operation);
-            when(walletService.getWallet(request.getSenderNumber())).thenReturn(WalletResponse.builder().build());
-            when(walletMapper.mapToWallet(WalletResponse.builder().build())).thenReturn(operation.getSender());
+        @ArgumentsSource(SaveWithdrawalOperationInsufficientFundsArguments.class)
+        public void createWithdrawalOperationInsufficientFundsTest(OperationRequest request, WalletResponse walletResponse) {
+            when(walletService.getWallet(anyLong())).thenReturn(walletResponse);
 
-            assertThrows(NoFundsException.class, () -> operationService.createOperation(request));
-            verify(operationMapper, times(1)).mapToOperation(request);
-            verify(walletService, times(1)).getWallet(request.getSenderNumber());
-            verify(walletMapper, times(1)).mapToWallet(WalletResponse.builder().build());
+            assertThatThrownBy(() -> operationService.createOperation(request)).isInstanceOf(NoFundsException.class)
+                    .hasMessage(NO_FUNDS);
+
+            verify(walletService).getWallet(anyLong());
         }
 
         @DisplayName("create transfer operation")
         @ParameterizedTest
-        @ArgumentsSource(TransferOperationsSameCurrenciesArgumentProvider.class)
-        public void createTransferOperationTest(OperationRequest request, Operation operation, OperationResponse response) {
-            when(operationMapper.mapToOperation(request)).thenReturn(operation);
-            when(walletService.getWallet(request.getSenderNumber())).thenReturn(WalletResponse.builder().build());
-            when(walletMapper.mapToWallet(WalletResponse.builder().build())).thenReturn(operation.getSender());
+        @ArgumentsSource(SaveTransferOperationInsufficientArguments.class)
+        public void createTransferOperationInsufficientFundsTest(OperationRequest request, WalletResponse walletResponse) {
+            when(walletService.getWallet(anyLong())).thenReturn(walletResponse);
 
-            assertThrows(NoFundsException.class, () -> operationService.createOperation(request));
-            verify(operationMapper, times(1)).mapToOperation(request);
-            verify(walletService, times(2)).getWallet(request.getSenderNumber());
-            verify(walletMapper, times(2)).mapToWallet(WalletResponse.builder().build());
+            assertThatThrownBy(() -> operationService.createOperation(request)).isInstanceOf(NoFundsException.class)
+                    .hasMessage(NO_FUNDS);
+
+            verify(walletService, times(2)).getWallet(anyLong());
         }
     }
 
@@ -246,6 +197,28 @@ class OperationServiceImplTest {
     @DisplayName("with different currencies")
     public class DifferentCurrencies {
 
-    }
+        @DisplayName("create transfer operation different currencies")
+        @ParameterizedTest
+        @ArgumentsSource(SaveTransferDifferentCurrenciesArguments.class)
+        public void createTransferOperationDifferentCurrenciesTest(
+                OperationRequest request,
+                Operation operation,
+                OperationResponse response,
+                WalletResponse walletResponseByn,
+                WalletResponse walletResponseUsd,
+                CurrencyResponse currencyResponse) {
 
+            when(walletService.getWallet(1L)).thenReturn(walletResponseByn);
+            when(walletService.getWallet(2L)).thenReturn(walletResponseUsd);
+            when(currencyService.getCurrency(anyString())).thenReturn(currencyResponse);
+            when(operationRepository.save(operation)).thenReturn(operation);
+
+            OperationResponse actual = operationService.createOperation(request);
+            assertThat(actual).isEqualTo(response);
+
+            verify(walletService).getWallet(1L);
+            verify(walletService).getWallet(2L);
+            verify(operationRepository).save(operation);
+        }
+    }
 }
