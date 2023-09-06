@@ -11,6 +11,7 @@ import com.heretic.dmoney.services.WalletService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,6 +31,7 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository walletRepository;
 
     @Override
+    @Transactional
     public WalletResponse saveWallet(WalletRequest walletRequest, UUID personId) {
         Wallet wallet = walletMapper.mapToWallet(walletRequest);
         wallet.setPerson(personMapper.mapToPerson(personService.getPerson(personId)));
@@ -38,6 +40,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public WalletResponse getWallet(UUID id) {
         return walletRepository.findById(id)
                 .map(walletMapper::mapToWalletResponse)
@@ -45,6 +48,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public WalletResponse getWallet(Long walletNumber) {
         return walletRepository.findByWalletNumber(walletNumber)
                 .map(walletMapper::mapToWalletResponse)
@@ -52,6 +56,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<WalletResponse> getWallets() {
         return walletRepository.findAll()
                 .stream()
@@ -60,11 +65,13 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional
     public void updateWallet(BigDecimal amountDelta, UUID id) {
         walletRepository.updateAmountById(amountDelta, id);
     }
 
     @Override
+    @Transactional
     public boolean deleteWallet(UUID id) {
         walletRepository.deleteById(id);
         return true;

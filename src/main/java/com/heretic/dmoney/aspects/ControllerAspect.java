@@ -19,6 +19,7 @@ import java.util.Optional;
 public class ControllerAspect {
     private final static String REQUEST_LOG_PATTERN = "{} -> {}; args: {} uri: {}";
     private final static String RESPONSE_LOG_PATTERN = "{} -> {}: {}, response: {}";
+    private final static String BLANK = "";
 
 
     @Pointcut("execution(* com.heretic.dmoney.controllers..*(..)) && !@annotation(com.heretic.dmoney.aspects.ExcludeLogging)")
@@ -42,6 +43,6 @@ public class ControllerAspect {
                 request.getMethod(),
                 joinPoint.getSignature().toShortString(),
                 request.getRequestURI(),
-                Optional.ofNullable(response).orElse(""));
+                Optional.ofNullable(response).orElse(BLANK));
     }
 }

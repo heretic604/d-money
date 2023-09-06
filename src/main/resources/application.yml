@@ -8,5 +8,8 @@ spring:
     config:
       enabled: true
       uri: http://localhost:8888
+    consul:
+      host: localhost
+      port: 9994
   profiles:
     active: dev

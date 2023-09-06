@@ -13,6 +13,7 @@ import com.heretic.dmoney.services.WalletService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,6 +37,7 @@ public class OperationServiceImpl implements OperationService {
     private final OperationRepository operationRepository;
 
     @Override
+    @Transactional
     public OperationResponse createOperation(OperationRequest operationRequest) {
         Operation operation = operationMapper.mapToOperation(operationRequest);
 
@@ -51,6 +53,7 @@ public class OperationServiceImpl implements OperationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public OperationResponse getOperation(UUID id) {
         return operationRepository.findById(id)
                 .map(operationMapper::mapToOperationResponse)
@@ -58,6 +61,7 @@ public class OperationServiceImpl implements OperationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OperationResponse> getOperations() {
         return operationRepository.findAll()
                 .stream()
@@ -66,6 +70,7 @@ public class OperationServiceImpl implements OperationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<OperationResponse> getOperations(LocalDate date) {
         return operationRepository.getOperationsByTimeContaining(date)
                 .stream()
