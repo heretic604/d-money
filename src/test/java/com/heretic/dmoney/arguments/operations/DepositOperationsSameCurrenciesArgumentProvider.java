@@ -1,4 +1,4 @@
-package com.heretic.dmoney.extensions.operations;
+package com.heretic.dmoney.arguments.operations;
 
 import com.heretic.dmoney.dto.requests.OperationRequest;
 import com.heretic.dmoney.dto.responses.OperationResponse;
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import static com.heretic.dmoney.enums.OperationStatus.PROCESSED;
@@ -16,11 +16,10 @@ import static com.heretic.dmoney.util.Constants.DEFAULT_CURRENCY;
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static java.time.LocalDateTime.now;
-import static java.util.UUID.randomUUID;
 
 public class DepositOperationsSameCurrenciesArgumentProvider implements ArgumentsProvider {
 
-    private final static UUID OPERATION_ID = randomUUID();
+    //    private final static UUID OPERATION_ID = randomUUID();
     //    private final static Wallet wallet = Wallet.builder()
 //            .walletId(randomUUID())
 //            .amount(valueOf(100L))
@@ -34,10 +33,10 @@ public class DepositOperationsSameCurrenciesArgumentProvider implements Argument
             .amountOut(TEN)
             .currencyOut(DEFAULT_CURRENCY)
             .status(PROCESSED)
-            .time(now())
+            .time(LocalDateTime.of(2023, 1, 1, 16, 0))
             .build();
     private final static Operation DEPOSIT_OPERATION = Operation.builder()
-            .operationId(OPERATION_ID)
+//            .operationId(OPERATION_ID)
             .sender(null)
             .amountIn(null)
             .currencyIn(null)
@@ -45,10 +44,10 @@ public class DepositOperationsSameCurrenciesArgumentProvider implements Argument
             .currencyOut(DEFAULT_CURRENCY)
             .exRate(null)
             .status(PROCESSED)
-            .time(now())
+            .time(LocalDateTime.of(2023, 1, 1, 16, 0))
             .build();
     private final static OperationResponse DEPOSIT_OPERATION_RESPONSE = OperationResponse.builder()
-            .operationId(OPERATION_ID)
+//            .operationId(OPERATION_ID)
             .receiverNumber(1L)
             .senderNumber(null)
             .amountIn(TEN)
@@ -57,7 +56,7 @@ public class DepositOperationsSameCurrenciesArgumentProvider implements Argument
             .currencyOut(DEFAULT_CURRENCY)
             .exRate(ONE)
             .status(SUCCEED)
-            .time(now())
+            .time(LocalDateTime.of(2023, 1, 1, 16, 0))
             .build();
 
     @Override

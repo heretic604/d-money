@@ -1,140 +1,161 @@
 package com.heretic.dmoney.services;
 
+import com.heretic.dmoney.arguments.persons.PersonGetArguments;
+import com.heretic.dmoney.arguments.persons.PersonInvalidUpdateArguments;
+import com.heretic.dmoney.arguments.persons.PersonSaveArguments;
 import com.heretic.dmoney.dto.requests.PersonRequest;
 import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.entities.Person;
-import com.heretic.dmoney.extensions.PersonRequestParameterResolver;
-import com.heretic.dmoney.mappers.PersonMapper;
 import com.heretic.dmoney.mappers.PersonMapperImpl;
 import com.heretic.dmoney.repositories.PersonRepository;
 import com.heretic.dmoney.services.impl.PersonServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.heretic.dmoney.util.Constants.ENTITY_NOT_FOUND_BY_ID;
+import static com.heretic.dmoney.util.Constants.USER_NOT_FOUND_BY_USERNAME;
+import static java.lang.String.format;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.UUID.randomUUID;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @DisplayName("PersonService tests")
-@ExtendWith({MockitoExtension.class, PersonRequestParameterResolver.class})
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@TestInstance(PER_CLASS)
 class PersonServiceImplTest {
 
     @InjectMocks
     private PersonServiceImpl personService;
+    @Autowired
+    private PersonMapperImpl personMapper;
     @Mock
     private PersonRepository personRepository;
-    @Mock
-    private PersonMapper personMapper;
-    private static UUID personId;
-    private static Person person;
-    private static PersonResponse personResponse;
+    private static final UUID ID = randomUUID();
+    private static final String USERNAME = "test";
 
-    @BeforeAll
-    public static void init(PersonRequest personRequest) {
-        personId = randomUUID();
-        PersonMapperImpl mapper = new PersonMapperImpl();
-        person = mapper.mapToPerson(personRequest);
-        person.setPersonId(personId);
-        personResponse = mapper.mapToPersonResponse(person);
+    @BeforeEach
+    public void init() {
+        personService = new PersonServiceImpl(personMapper, personRepository);
     }
 
-    @Test()
-    public void savePersonTest(PersonRequest personRequest) {
+    @DisplayName("save person")
+    @ParameterizedTest()
+    @ArgumentsSource(PersonSaveArguments.class)
+    public void savePersonTest(PersonRequest request, Person person, PersonResponse response) {
         when(personRepository.save(person)).thenReturn(person);
-        when(personMapper.mapToPerson(personRequest)).thenReturn(person);
-        when(personMapper.mapToPersonResponse(person)).thenReturn(personResponse);
 
-        assertEquals(personResponse, personService.savePerson(personRequest));
-        verify(personRepository, times(1)).save(person);
-        verify(personMapper, times(1)).mapToPersonResponse(person);
-        verify(personMapper, times(1)).mapToPerson(personRequest);
+        PersonResponse actual = personService.savePerson(request);
+        assertThat(actual).isEqualTo(response);
+
+        verify(personRepository).save(person);
     }
 
-    @Test()
-    public void getPersonByValidIdTest() {
-        when(personMapper.mapToPersonResponse(person)).thenReturn(personResponse);
-        when(personRepository.findById(personId)).thenReturn(Optional.of(person));
+    @DisplayName("get by valid id")
+    @ParameterizedTest()
+    @ArgumentsSource(PersonGetArguments.class)
+    public void getPersonByValidIdTest(Person person, PersonResponse response) {
+        when(personRepository.findById(ID)).thenReturn(of(person));
 
-        assertEquals(personId, personService.getPerson(personId).getPersonId());
-        verify(personMapper, times(1)).mapToPersonResponse(person);
-        verify(personRepository, times(1)).findById(personId);
+        PersonResponse actual = personService.getPerson(ID);
+        assertThat(actual).isEqualTo(response);
+        verify(personRepository).findById(ID);
     }
 
-    @Test()
-    public void getPersonByInvalidIdTest() {
-        when(personRepository.findById(personId)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> personService.getPerson(personId));
-        verify(personRepository, times(1)).findById(personId);
-    }
-
+    @DisplayName("get by invalid id")
     @Test
-    public void getPersonByValidUsernameTest(PersonRequest personRequest) {
-        String validUsername = personRequest.getUsername();
-        when(personMapper.mapToPersonResponse(person)).thenReturn(personResponse);
-        when(personRepository.findByUsername(validUsername)).thenReturn(Optional.of(person));
+    public void getPersonByInvalidIdTest() {
+        when(personRepository.findById(ID)).thenReturn(empty());
 
-        assertEquals(validUsername, personService.getPerson(validUsername).getUsername());
-        verify(personMapper, times(1)).mapToPersonResponse(person);
-        verify(personRepository, times(1)).findByUsername(validUsername);
+        assertThatThrownBy(() -> personService.getPerson(ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(format(ENTITY_NOT_FOUND_BY_ID, ID));
+
+        verify(personRepository).findById(ID);
     }
 
+    @DisplayName("get by valid username")
+    @ParameterizedTest()
+    @ArgumentsSource(PersonGetArguments.class)
+    public void getPersonByValidUsernameTest(Person person, PersonResponse response) {
+        when(personRepository.findByUsername(USERNAME)).thenReturn(of(person));
+
+        PersonResponse actual = personService.getPerson(USERNAME);
+        assertThat(actual).isEqualTo(response);
+
+        verify(personRepository).findByUsername(USERNAME);
+    }
+
+    @DisplayName("get by invalid username")
     @Test
     public void getPersonByInvalidUsernameTest() {
-        String invalidUsername = "invalid_username";
-        when(personRepository.findByUsername(invalidUsername)).thenReturn(Optional.empty());
+        when(personRepository.findByUsername(USERNAME)).thenReturn(empty());
 
-        assertThrows(EntityNotFoundException.class, () -> personService.getPerson(invalidUsername));
-        verify(personRepository, times(1)).findByUsername(invalidUsername);
+        assertThatThrownBy(() -> personService.getPerson(USERNAME)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(format(USER_NOT_FOUND_BY_USERNAME, USERNAME));
+
+        verify(personRepository).findByUsername(USERNAME);
     }
 
-    @Test
-    public void getPersonsTest() {
-        when(personMapper.mapToPersonResponse(person)).thenReturn(personResponse);
+    @DisplayName("get all persons")
+    @ParameterizedTest()
+    @ArgumentsSource(PersonGetArguments.class)
+    public void getPersonsTest(Person person, PersonResponse response) {
         when(personRepository.findAll()).thenReturn(List.of(person));
 
-        assertEquals(List.of(personResponse), personService.getPersons());
-        verify(personMapper, times(1)).mapToPersonResponse(person);
-        verify(personRepository, times(1)).findAll();
+        List<PersonResponse> actual = personService.getPersons();
+        assertThat(actual).isEqualTo(List.of(response));
+
+        verify(personRepository).findAll();
     }
 
-    @Test
-    public void updatePersonByValidIdTest(PersonRequest personRequest) {
-        when(personRepository.findById(personId)).thenReturn(Optional.of(person));
-        when(personMapper.updatePerson(personRequest, person)).thenReturn(person);
+    @DisplayName("update by valid ID")
+    @ParameterizedTest()
+    @ArgumentsSource(PersonSaveArguments.class)
+    public void updatePersonByValidIdTest(PersonRequest request, Person person, PersonResponse response) {
+        when(personRepository.findById(ID)).thenReturn(Optional.of(person));
         when(personRepository.save(person)).thenReturn(person);
-        when(personMapper.mapToPersonResponse(person)).thenReturn(personResponse);
 
-        assertEquals(personResponse, personService.updatePerson(personRequest, personId));
-        verify(personRepository, times(1)).findById(personId);
-        verify(personRepository, times(1)).save(person);
-        verify(personMapper, times(1)).updatePerson(personRequest, person);
-        verify(personMapper, times(1)).mapToPersonResponse(person);
+        PersonResponse actual = personService.updatePerson(request, ID);
+        assertThat(actual).isEqualTo(response);
+
+        verify(personRepository).findById(ID);
+        verify(personRepository).save(person);
     }
 
-    @Test
-    public void updatePersonByInvalidIdTest(PersonRequest personRequest) {
-        when(personRepository.findById(personId)).thenReturn(Optional.empty());
+    @DisplayName("update by invalid ID")
+    @ParameterizedTest()
+    @ArgumentsSource(PersonInvalidUpdateArguments.class)
+    public void updatePersonByInvalidIdTest(PersonRequest request) {
+        when(personRepository.findById(ID)).thenReturn(empty());
 
-        assertThrows(EntityNotFoundException.class, () -> personService.updatePerson(personRequest, personId));
-        verify(personRepository, times(1)).findById(personId);
-        verify(personRepository, times(0)).save(person);
-        verify(personMapper, times(0)).updatePerson(personRequest, person);
-        verify(personMapper, times(0)).mapToPersonResponse(person);
+        assertThatThrownBy(() -> personService.updatePerson(request, ID)).isInstanceOf(EntityNotFoundException.class)
+                .hasMessage(format(ENTITY_NOT_FOUND_BY_ID, ID));
+        verify(personRepository).findById(ID);
     }
 
+    @DisplayName("delete person")
     @Test
     public void deletePersonTest() {
-        assertTrue(personService.deletePerson(personId));
+        assertThat(personService.deletePerson(ID)).isTrue();
     }
 }

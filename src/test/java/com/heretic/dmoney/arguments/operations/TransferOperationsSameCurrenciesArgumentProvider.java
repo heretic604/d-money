@@ -1,9 +1,8 @@
-package com.heretic.dmoney.extensions.operations;
+package com.heretic.dmoney.arguments.operations;
 
 import com.heretic.dmoney.dto.requests.OperationRequest;
 import com.heretic.dmoney.dto.responses.OperationResponse;
 import com.heretic.dmoney.entities.Operation;
-import com.heretic.dmoney.entities.Wallet;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -18,7 +17,7 @@ import static java.math.BigDecimal.*;
 import static java.time.LocalDateTime.now;
 import static java.util.UUID.randomUUID;
 
-public class WithdrawalOperationsSameCurrenciesArgumentProvider implements ArgumentsProvider {
+public class TransferOperationsSameCurrenciesArgumentProvider implements ArgumentsProvider {
 
     private final static UUID OPERATION_ID = randomUUID();
 //    private final static Wallet wallet = Wallet.builder()
@@ -26,31 +25,31 @@ public class WithdrawalOperationsSameCurrenciesArgumentProvider implements Argum
 //            .walletNumber(1L)
 //            .currency(DEFAULT_CURRENCY)
 //            .build();
-    private final static OperationRequest WITHDRAWAL_OPERATION_REQUEST = OperationRequest.builder()
-            .receiverNumber(null)
+    private final static OperationRequest DEPOSIT_OPERATION_REQUEST = OperationRequest.builder()
+            .receiverNumber(1L)
             .senderNumber(1L)
             .amountIn(null)
-            .currencyIn(DEFAULT_CURRENCY)
+            .currencyIn(null)
             .amountOut(TEN)
             .currencyOut(null)
             .status(PROCESSED)
             .time(now())
             .build();
-    private final static Operation WITHDRAWAL_OPERATION = Operation.builder()
+    private final static Operation DEPOSIT_OPERATION = Operation.builder()
             .operationId(OPERATION_ID)
-            .receiver(null)
+//            .receiver(wallet)
 //            .sender(wallet)
             .amountIn(null)
-            .currencyIn(DEFAULT_CURRENCY)
+            .currencyIn(null)
             .amountOut(TEN)
             .currencyOut(null)
             .exRate(null)
             .status(PROCESSED)
             .time(now())
             .build();
-    private final static OperationResponse WITHDRAWAL_OPERATION_RESPONSE = OperationResponse.builder()
+    private final static OperationResponse DEPOSIT_OPERATION_RESPONSE = OperationResponse.builder()
             .operationId(OPERATION_ID)
-            .receiverNumber(null)
+            .receiverNumber(1L)
             .senderNumber(1L)
             .amountIn(TEN)
             .currencyIn(DEFAULT_CURRENCY)
@@ -64,7 +63,7 @@ public class WithdrawalOperationsSameCurrenciesArgumentProvider implements Argum
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
         return Stream.of(
-                Arguments.of(WITHDRAWAL_OPERATION_REQUEST, WITHDRAWAL_OPERATION, WITHDRAWAL_OPERATION_RESPONSE)
+                Arguments.of(DEPOSIT_OPERATION_REQUEST, DEPOSIT_OPERATION, DEPOSIT_OPERATION_RESPONSE)
         );
     }
 }

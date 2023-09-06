@@ -5,7 +5,7 @@ import com.heretic.dmoney.dto.responses.PersonResponse;
 import com.heretic.dmoney.dto.responses.WalletResponse;
 import com.heretic.dmoney.entities.Person;
 import com.heretic.dmoney.entities.Wallet;
-import com.heretic.dmoney.extensions.WalletRequestParameterResolver;
+import com.heretic.dmoney.arguments.WalletRequestParameterResolver;
 import com.heretic.dmoney.mappers.PersonMapper;
 import com.heretic.dmoney.mappers.WalletMapper;
 import com.heretic.dmoney.mappers.WalletMapperImpl;
