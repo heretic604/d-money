@@ -9,5 +9,4 @@ class DMoneyApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
