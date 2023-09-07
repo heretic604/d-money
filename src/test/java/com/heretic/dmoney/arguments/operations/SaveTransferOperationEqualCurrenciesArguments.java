@@ -14,8 +14,8 @@ import java.util.stream.Stream;
 import static com.heretic.dmoney.enums.OperationStatus.PROCESSED;
 import static com.heretic.dmoney.enums.OperationStatus.SUCCEED;
 import static com.heretic.dmoney.util.Constants.DEFAULT_CURRENCY;
-import static java.math.BigDecimal.*;
-import static java.time.LocalDateTime.now;
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.TEN;
 import static java.time.LocalDateTime.of;
 
 public class SaveTransferOperationEqualCurrenciesArguments implements ArgumentsProvider {

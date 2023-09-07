@@ -41,6 +41,7 @@ import static org.mockito.Mockito.*;
 @DisplayName("OperationService tests")
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
+@TestInstance(PER_CLASS)
 class OperationServiceImplTest {
 
     @InjectMocks
@@ -69,7 +70,6 @@ class OperationServiceImplTest {
 
     @Nested
     @DisplayName("with same currency and sufficient funds")
-    @TestInstance(PER_CLASS)
     public class SufficientFunds {
 
         @DisplayName("create deposit operation")

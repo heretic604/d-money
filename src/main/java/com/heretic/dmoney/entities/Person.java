@@ -47,7 +47,7 @@ public class Person {
     @Column(name = "USER_ROLE", nullable = false)
     private UserRole role;
 
-    @Column(name = "BIRTHDAY",updatable = false, nullable = false)
+    @Column(name = "BIRTHDAY", updatable = false, nullable = false)
     private LocalDate birthday;
 
     @Column(name = "REGISTRATION", updatable = false, nullable = false)

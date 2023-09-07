@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static jakarta.persistence.FetchType.EAGER;
+import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Table(name = "WALLET")
@@ -38,9 +39,9 @@ public class Wallet {
     @Column(name = "AMOUNT", nullable = false)
     private BigDecimal amount;
 
-    @OneToMany(mappedBy = "sender", fetch = EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "sender", fetch = LAZY)
     private List<Operation> incomeOperations;
 
-    @OneToMany(mappedBy = "receiver", fetch = EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "receiver", fetch = LAZY)
     private List<Operation> outcomeOperations;
 }

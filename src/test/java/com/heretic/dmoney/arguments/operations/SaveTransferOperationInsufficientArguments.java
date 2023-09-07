@@ -1,10 +1,7 @@
 package com.heretic.dmoney.arguments.operations;
 
 import com.heretic.dmoney.dto.requests.OperationRequest;
-import com.heretic.dmoney.dto.responses.OperationResponse;
 import com.heretic.dmoney.dto.responses.WalletResponse;
-import com.heretic.dmoney.entities.Operation;
-import com.heretic.dmoney.entities.Wallet;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -12,9 +9,9 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import java.util.stream.Stream;
 
 import static com.heretic.dmoney.enums.OperationStatus.PROCESSED;
-import static com.heretic.dmoney.enums.OperationStatus.SUCCEED;
 import static com.heretic.dmoney.util.Constants.DEFAULT_CURRENCY;
-import static java.math.BigDecimal.*;
+import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.ZERO;
 import static java.time.LocalDateTime.of;
 
 public class SaveTransferOperationInsufficientArguments implements ArgumentsProvider {

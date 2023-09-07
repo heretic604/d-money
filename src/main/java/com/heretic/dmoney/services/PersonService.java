@@ -2,7 +2,6 @@ package com.heretic.dmoney.services;
 
 import com.heretic.dmoney.dto.requests.PersonRequest;
 import com.heretic.dmoney.dto.responses.PersonResponse;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;

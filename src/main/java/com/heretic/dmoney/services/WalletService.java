@@ -43,6 +43,12 @@ public interface WalletService {
      */
     List<WalletResponse> getWallets();
 
+    /**
+     * Update wallet amount
+     *
+     * @param amountDelta amount change
+     * @param id          wallet ID to update
+     */
     void updateWallet(BigDecimal amountDelta, UUID id);
 
     /**
