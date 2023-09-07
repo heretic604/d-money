@@ -44,6 +44,7 @@ You can read more in the documentation of specific services!
 ### Technologies
 * Java 17
 * Hibernate
+* MySQL
 * Springboot
 * Spring boot test, JUnit, AssertJ, Mockito
 * Maven
