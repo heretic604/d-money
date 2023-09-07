@@ -26,7 +26,7 @@ JSON body:
 A response will be received in JSON format:  
 ![](images/person.bmp)  
 The same will happen with wallets and transactions. For example, after completing a transaction,
-you will receive the following response:
+you will receive the following response:  
 ![](images/transfer.bmp)  
 It is possible to obtain information about all users,
 wallets and transactions using the following endpoints:  
