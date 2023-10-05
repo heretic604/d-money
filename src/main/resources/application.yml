@@ -13,3 +13,18 @@ spring:
 #      port: 9994
   profiles:
     active: dev
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    port: 587
+    username: el.grilgo@gmail.com
+    password: unefmqhkiuiugzso
+    protocol: smtp
+    properties:
+      mail:
+        tls:
+          enable: true
+        smtp:
+          auth: true
+          starttls.enable: true
+          tls.trust: smtp.gmail.com

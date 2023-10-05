@@ -23,6 +23,7 @@ import static java.lang.String.format;
 public class PersonServiceImpl implements PersonService {
 
     private final CheckGenerationPasswordImpl passwordService;
+    private final EmailSenderServiceImpl emailService;
     private final PersonMapper mapper;
     private final PersonRepository personRepository;
 
@@ -33,6 +34,7 @@ public class PersonServiceImpl implements PersonService {
         Person person = mapper.mapToPerson(personRequest);
         person.setPassword(passwordService.getHashPassword(personRequest.getPassword()));
         person = personRepository.save(person);
+        emailService.sendSuccessfulRegistrationMail(person.getEmail());
         return mapper.mapToPersonResponse(person);
     }
 
