@@ -21,7 +21,7 @@ JSON body:
 "email": "test@mail.ru",  
 "status": "ACTIVE",  
 "role": "ADMIN",  
-"birthday": "1980-04-20  
+"birthday": "1980-04-20"  
 }  
 A response will be received in JSON format:  
 ![](images/person.bmp)  
