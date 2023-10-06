@@ -22,14 +22,20 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class PersonServiceImpl implements PersonService {
 
+    private final CheckGenerationPasswordImpl passwordService;
+    private final EmailSenderServiceImpl emailService;
     private final PersonMapper mapper;
     private final PersonRepository personRepository;
 
     @Override
     @Transactional
     public PersonResponse savePerson(PersonRequest personRequest) {
-        Person savedPerson = personRepository.save(mapper.mapToPerson(personRequest));
-        return mapper.mapToPersonResponse(savedPerson);
+//        Person savedPerson = personRepository.save(mapper.mapToPerson(personRequest));
+        Person person = mapper.mapToPerson(personRequest);
+        person.setPassword(passwordService.getHashPassword(personRequest.getPassword()));
+        person = personRepository.save(person);
+        emailService.sendSuccessfulRegistrationMail(person.getEmail());
+        return mapper.mapToPersonResponse(person);
     }
 
     @Override
